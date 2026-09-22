@@ -1,0 +1,2619 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>Estudos Descomplicados • Banco de Dados 1º Bimestre</title>
+  
+  <!-- Fonte Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ==========================================================================
+       RESET & VARIÁVEIS DO SISTEMA
+       ========================================================================== */
+    :root {
+      --font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      
+      --bg-app: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-subtle: #f1f5f9;
+      --bg-hover: #e2e8f0;
+      
+      --border-color: #e2e8f0;
+      --border-focus: #3b82f6;
+
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-soft: #eff6ff;
+      --primary-border: #bfdbfe;
+
+      --success: #10b981;
+      --success-soft: #ecfdf5;
+      --success-border: #a7f3d0;
+      --success-text: #065f46;
+
+      --danger: #ef4444;
+      --danger-soft: #fef2f2;
+      --danger-border: #fecaca;
+      --danger-text: #991b1b;
+
+      --warning: #f59e0b;
+      --warning-soft: #fffbeb;
+      --warning-border: #fde68a;
+      --warning-text: #92400e;
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      
+      --sidebar-width: 280px;
+      --header-height-mobile: 60px;
+      --transition-fast: 0.2s ease;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--bg-app);
+      color: var(--text-main);
+      line-height: 1.6;
+      font-size: 15px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app-layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Header Mobile */
+    .mobile-header {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--header-height-mobile);
+      background-color: var(--bg-surface);
+      border-bottom: 1px solid var(--border-color);
+      z-index: 50;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+    }
+
+    .mobile-menu-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      padding: 8px;
+      border-radius: var(--radius-sm);
+    }
+
+    .mobile-menu-btn span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background-color: var(--text-main);
+      border-radius: 2px;
+      transition: var(--transition-fast);
+    }
+
+    .mobile-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+    }
+
+    .badge-bim {
+      background-color: var(--primary-soft);
+      color: var(--primary);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .header-stats-mini .mini-score {
+      background-color: var(--bg-subtle);
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 12px;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: var(--sidebar-width);
+      background-color: var(--bg-surface);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 60;
+      transition: transform 0.3s ease;
+    }
+
+    .sidebar-header {
+      padding: 24px 20px 16px 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .tag-status {
+      display: inline-block;
+      background-color: var(--primary-soft);
+      color: var(--primary);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .sidebar-header h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.2;
+    }
+
+    .sidebar-header .subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 12px;
+    }
+
+    .nav-section-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-light);
+      letter-spacing: 0.8px;
+      padding: 12px 10px 6px 10px;
+      text-transform: uppercase;
+    }
+
+    .nav-item {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      margin-bottom: 4px;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      font-family: var(--font-family);
+      font-size: 14px;
+      font-weight: 500;
+      text-align: left;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .nav-item:hover {
+      background-color: var(--bg-subtle);
+      color: var(--text-main);
+    }
+
+    .nav-item.active {
+      background-color: var(--primary-soft);
+      color: var(--primary);
+      border-color: var(--primary-border);
+      font-weight: 600;
+    }
+
+    .nav-item.nav-action {
+      color: var(--primary);
+    }
+
+    .nav-item.nav-action.active {
+      background-color: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    .nav-icon {
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .sidebar-footer {
+      padding: 16px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .quick-perf-card {
+      background-color: var(--bg-subtle);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .quick-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+    }
+
+    .quick-perf-card strong {
+      font-size: 20px;
+      color: var(--text-main);
+      line-height: 1;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 6px;
+      background-color: var(--border-color);
+      border-radius: 3px;
+      overflow: hidden;
+      margin: 4px 0 2px 0;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background-color: var(--primary);
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+
+    .quick-perf-card small {
+      font-size: 11px;
+      color: var(--text-light);
+    }
+
+    .sidebar-overlay {
+      display: none;
+    }
+
+    /* Conteúdo Principal */
+    .main-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      padding: 40px 48px;
+      max-width: 1040px;
+      min-height: 100vh;
+    }
+
+    .content-section {
+      display: none;
+      animation: fadeIn 0.25s ease-in-out;
+    }
+
+    .content-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-header {
+      margin-bottom: 32px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .topic-tag {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 6px;
+    }
+
+    .section-header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+
+    .section-desc {
+      font-size: 15px;
+      color: var(--text-muted);
+      max-width: 760px;
+    }
+
+    .concept-block {
+      margin-bottom: 44px;
+    }
+
+    .concept-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .step-card {
+      display: flex;
+      gap: 16px;
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 18px 22px;
+      margin-bottom: 14px;
+      transition: border-color var(--transition-fast);
+    }
+
+    .step-card:hover {
+      border-color: #cbd5e1;
+    }
+
+    .step-num {
+      width: 30px;
+      height: 30px;
+      background-color: var(--bg-subtle);
+      color: var(--text-muted);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .step-body {
+      flex: 1;
+    }
+
+    .step-body h3 {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .step-body p, .step-body ul {
+      font-size: 14.5px;
+      color: var(--text-main);
+      line-height: 1.65;
+    }
+
+    .step-body ul {
+      padding-left: 20px;
+      margin-top: 6px;
+    }
+
+    .step-body li {
+      margin-bottom: 6px;
+    }
+
+    .reminder-card {
+      background-color: #fefce8;
+      border-color: #fef08a;
+    }
+
+    .reminder-card .step-num {
+      background-color: #fef08a;
+      color: #854d0e;
+    }
+
+    .reminder-card .step-body h3 {
+      color: #854d0e;
+    }
+
+    .reminder-card .step-body p {
+      color: #713f12;
+    }
+
+    .term-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .term-card {
+      background-color: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .term-common {
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+
+    .term-formal {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .term-desc {
+      font-size: 12.5px;
+      color: var(--text-main);
+    }
+
+    .highlight-box {
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      margin: 10px 0;
+      font-size: 14px;
+    }
+
+    .highlight-box.alert {
+      background-color: #fff1f2;
+      border-left: 4px solid #f43f5e;
+      color: #881337;
+    }
+
+    .highlight-box.info {
+      background-color: var(--primary-soft);
+      border-left: 4px solid var(--primary);
+      color: #1e3a8a;
+    }
+
+    .code-preview {
+      background-color: #0f172a;
+      color: #f8fafc;
+      padding: 14px 18px;
+      border-radius: var(--radius-sm);
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 13.5px;
+      margin-top: 8px;
+      overflow-x: auto;
+    }
+
+    .code-comment {
+      color: #94a3b8;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .sql-code {
+      background-color: #0f172a;
+      color: #e2e8f0;
+      padding: 16px;
+      border-radius: var(--radius-sm);
+      overflow-x: auto;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 13.5px;
+      line-height: 1.5;
+      margin-top: 10px;
+    }
+
+    code {
+      font-family: 'Consolas', 'Monaco', monospace;
+      background-color: var(--bg-subtle);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+      color: var(--primary);
+    }
+
+    .table-container {
+      overflow-x: auto;
+      margin-top: 10px;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+    }
+
+    .data-table th, .data-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border-color);
+      text-align: left;
+    }
+
+    .data-table th {
+      background-color: var(--bg-subtle);
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    /* ==========================================================================
+       EXERCÍCIOS & FILTROS DE DIFICULDADE
+       ========================================================================== */
+    .quiz-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      margin-bottom: 20px;
+    }
+
+    .filters-wrapper {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      flex: 1;
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .filter-group label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .select-input {
+      font-family: var(--font-family);
+      font-size: 13.5px;
+      font-weight: 500;
+      padding: 9px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-subtle);
+      color: var(--text-main);
+      outline: none;
+      cursor: pointer;
+    }
+
+    .btn-secondary {
+      font-family: var(--font-family);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 10px 16px;
+      background-color: var(--bg-subtle);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+    }
+
+    .quiz-status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    .questions-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .question-card {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      transition: border-color var(--transition-fast);
+    }
+
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .q-badges {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .q-topic-badge {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--primary);
+      background-color: var(--primary-soft);
+      padding: 3px 8px;
+      border-radius: 12px;
+    }
+
+    /* Badges de Dificuldade */
+    .q-diff-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .q-diff-badge.facil {
+      background-color: var(--success-soft);
+      color: var(--success-text);
+      border: 1px solid var(--success-border);
+    }
+
+    .q-diff-badge.medio {
+      background-color: var(--warning-soft);
+      color: var(--warning-text);
+      border: 1px solid var(--warning-border);
+    }
+
+    .q-diff-badge.dificil {
+      background-color: var(--danger-soft);
+      color: var(--danger-text);
+      border: 1px solid var(--danger-border);
+    }
+
+    .q-type-badge {
+      font-size: 11.5px;
+      color: var(--text-light);
+      font-weight: 500;
+    }
+
+    .question-text {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-main);
+      line-height: 1.5;
+      margin-bottom: 18px;
+    }
+
+    .options-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option-btn {
+      width: 100%;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      background-color: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      font-size: 14px;
+      text-align: left;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      line-height: 1.45;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      background-color: var(--bg-hover);
+      border-color: #cbd5e1;
+    }
+
+    .opt-letter {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      font-weight: 600;
+      font-size: 12px;
+      flex-shrink: 0;
+      color: var(--text-muted);
+    }
+
+    .opt-text {
+      flex: 1;
+    }
+
+    .option-btn.correct {
+      background-color: var(--success-soft) !important;
+      border-color: var(--success-border) !important;
+      color: var(--success-text) !important;
+      font-weight: 500;
+    }
+
+    .option-btn.correct .opt-letter {
+      background-color: var(--success);
+      color: #ffffff;
+      border-color: var(--success);
+    }
+
+    .option-btn.incorrect {
+      background-color: var(--danger-soft) !important;
+      border-color: var(--danger-border) !important;
+      color: var(--danger-text) !important;
+    }
+
+    .option-btn.incorrect .opt-letter {
+      background-color: var(--danger);
+      color: #ffffff;
+      border-color: var(--danger);
+    }
+
+    .option-btn:disabled {
+      cursor: default;
+      opacity: 0.95;
+    }
+
+    .question-feedback {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      line-height: 1.5;
+      display: none;
+    }
+
+    .question-feedback.show {
+      display: block;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .question-feedback.feedback-correct {
+      background-color: var(--success-soft);
+      border: 1px solid var(--success-border);
+      color: var(--success-text);
+    }
+
+    .question-feedback.feedback-incorrect {
+      background-color: var(--danger-soft);
+      border: 1px solid var(--danger-border);
+      color: var(--danger-text);
+    }
+
+    .feedback-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    /* Métricas */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .metric-card {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .metric-icon {
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+
+    .metric-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .metric-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.1;
+    }
+
+    .metric-subtitle {
+      font-size: 12px;
+      color: var(--text-light);
+    }
+
+    .metric-card.success .metric-value {
+      color: var(--success);
+    }
+
+    .metric-card.danger .metric-value {
+      color: var(--danger);
+    }
+
+    .metric-card.highlight {
+      border-color: var(--primary-border);
+      background-color: var(--primary-soft);
+    }
+
+    .metric-card.highlight .metric-value {
+      color: var(--primary);
+    }
+
+    .card-box {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .card-box h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 16px;
+    }
+
+    .progress-box-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .progress-box-header h3 {
+      margin-bottom: 0;
+    }
+
+    .progress-box-header span {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .progress-bar-large {
+      width: 100%;
+      height: 10px;
+      background-color: var(--bg-subtle);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill-large {
+      height: 100%;
+      background-color: var(--primary);
+      border-radius: 5px;
+      transition: width 0.4s ease;
+    }
+
+    .topic-stats-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .topic-stat-item {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .topic-stat-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13.5px;
+    }
+
+    .topic-stat-name {
+      font-weight: 500;
+      color: var(--text-main);
+    }
+
+    .topic-stat-score {
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .danger-zone {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      background-color: #fef2f2;
+      border: 1px solid var(--danger-border);
+      border-radius: var(--radius-md);
+      padding: 18px 22px;
+    }
+
+    .danger-zone strong {
+      display: block;
+      font-size: 14px;
+      color: var(--danger-text);
+      margin-bottom: 2px;
+    }
+
+    .danger-zone p {
+      font-size: 13px;
+      color: #7f1d1d;
+    }
+
+    .btn-danger {
+      font-family: var(--font-family);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 12px 18px;
+      background-color: var(--danger);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+    }
+
+    /* ==========================================================================
+       RESPONSIVIDADE (CELULAR & TABLET)
+       ========================================================================== */
+    @media (max-width: 860px) {
+      .mobile-header {
+        display: flex;
+      }
+
+      .sidebar {
+        transform: translateX(-100%);
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .sidebar-overlay {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(15, 23, 42, 0.5);
+        z-index: 55;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+
+      .sidebar-overlay.active {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: calc(var(--header-height-mobile) + 20px) 16px 40px 16px;
+      }
+
+      .section-header h1 {
+        font-size: 22px;
+      }
+
+      .step-card {
+        padding: 14px 16px;
+        gap: 12px;
+      }
+
+      .step-num {
+        width: 26px;
+        height: 26px;
+        font-size: 12px;
+      }
+
+      .metrics-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .question-card {
+        padding: 18px 16px;
+      }
+
+      .question-text {
+        font-size: 15px;
+      }
+      
+      .filters-wrapper {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .filter-group {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .select-input {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .metrics-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .btn-secondary {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Barra Superior Mobile -->
+  <header class="mobile-header">
+    <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="Abrir Menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <div class="mobile-brand">
+      <span class="badge-bim">1º Bimestre</span>
+      <strong>Banco de Dados</strong>
+    </div>
+    <div class="header-stats-mini" id="miniStats">
+      <span class="mini-score">0%</span>
+    </div>
+  </header>
+
+  <div class="app-layout">
+    
+    <!-- Menu Lateral (Sidebar) -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo-area">
+          <span class="tag-status">Sem Enrolação</span>
+          <h2>Banco de Dados</h2>
+          <p class="subtitle">Tudo explicado do jeito simples</p>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <p class="nav-section-title">CONTEÚDOS DA PROVA</p>
+        <button class="nav-item active" data-target="modelo-relacional">
+          <span class="nav-icon">🗄️</span>
+          <span class="nav-text">Modelo Relacional</span>
+        </button>
+        <button class="nav-item" data-target="cardinalidade">
+          <span class="nav-icon">🔗</span>
+          <span class="nav-text">Cardinalidade</span>
+        </button>
+        <button class="nav-item" data-target="normalizacao">
+          <span class="nav-icon">📐</span>
+          <span class="nav-text">Normalização</span>
+        </button>
+        <button class="nav-item" data-target="create-table">
+          <span class="nav-icon">💻</span>
+          <span class="nav-text">Create Table (SQL)</span>
+        </button>
+
+        <p class="nav-section-title">PRÁTICA & AVALIAÇÃO</p>
+        <button class="nav-item nav-action" data-target="treinar">
+          <span class="nav-icon">✏️</span>
+          <span class="nav-text">Treinar Questões</span>
+        </button>
+        <button class="nav-item" data-target="desempenho">
+          <span class="nav-icon">📊</span>
+          <span class="nav-text">Meu Desempenho</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="quick-perf-card">
+          <span class="quick-label">Aproveitamento</span>
+          <strong id="sidebarAccuracy">0%</strong>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="sidebarProgressFill" style="width: 0%;"></div>
+          </div>
+          <small id="sidebarQuestionsCount">0 respondidas</small>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Overlay escuro para fechar menu no mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Área Principal de Conteúdo -->
+    <main class="main-content">
+      
+      <!-- ======================================================== -->
+      <!-- TÓPICO 1: MODELO RELACIONAL                              -->
+      <!-- ======================================================== -->
+      <section id="modelo-relacional" class="content-section active">
+        <header class="section-header">
+          <div class="topic-tag">Tópico 1</div>
+          <h1>Modelo Relacional</h1>
+          <p class="section-desc">Pense nisso como tabelas parecidas com planilhas do Excel que se conversam entre si por meio de códigos (IDs).</p>
+        </header>
+
+        <article class="concept-block">
+          <h2 class="concept-title">1. Como os dados se organizam (e as palavras que o professor cobra)</h2>
+
+          <div class="step-card">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <h3>O que é</h3>
+              <p>É o jeito de guardar informações usando <strong>tabelas</strong> com linhas e colunas, onde uma tabela se conecta com a outra.</p>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <h3>Para que serve</h3>
+              <p>Serve para não virar bagunça. Em vez de salvar tudo num arquivo de texto solto, você organiza clientes numa tabela, cidades em outra e vendas em outra.</p>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <h3>Como funciona (Tradução dos nomes difíceis)</h3>
+              <p>O professor usa nomes técnicos para coisas simples que você já conhece:</p>
+              <div class="term-grid">
+                <div class="term-card">
+                  <span class="term-common">No dia a dia: Tabela</span>
+                  <strong class="term-formal">Relação</strong>
+                  <span class="term-desc">A tabela inteira (exemplo: a tabela de CLIENTES).</span>
+                </div>
+                <div class="term-card">
+                  <span class="term-common">No dia a dia: Linha do Excel</span>
+                  <strong class="term-formal">Tupla</strong>
+                  <span class="term-desc">Cada linha cadastrada (exemplo: a linha com os dados do Carlos).</span>
+                </div>
+                <div class="term-card">
+                  <span class="term-common">No dia a dia: Coluna</span>
+                  <strong class="term-formal">Atributo</strong>
+                  <span class="term-desc">O nome do campo (exemplo: Nome, Telefone, Endereço).</span>
+                </div>
+                <div class="term-card">
+                  <span class="term-common">No dia a dia: Tipo da coluna</span>
+                  <strong class="term-formal">Domínio</strong>
+                  <span class="term-desc">O que pode entrar naquele campo (só número, só texto, data, etc.).</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <h3>Exemplo simples</h3>
+              <p>Pense numa planilha chamada <code>CIDADE</code>. Ela tem as colunas <code>ID</code>, <code>NOME</code> e <code>UF</code>. Se tiver 3 cidades cadastradas lá dentro, ela tem <strong>3 tuplas</strong> (3 linhas) e <strong>3 atributos</strong> (3 colunas).</p>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">5</div>
+            <div class="step-body">
+              <h3>Caso prático da vida real</h3>
+              <p>No sistema de um mercado: você tem a tabela de <code>PRODUTOS</code>. Cada produto novo que chega na prateleira vira uma linha nova (uma tupla) com seu preço e código de barras.</p>
+            </div>
+          </div>
+
+          <div class="step-card reminder-card">
+            <div class="step-num">6</div>
+            <div class="step-body">
+              <h3>O que preciso lembrar para a prova</h3>
+              <p>Se o professor perguntar: <strong>Linha = Tupla</strong>, <strong>Coluna = Atributo</strong> e <strong>Tabela = Relação</strong>. Ele adora trocar a palavra "linha" por "tupla" nas perguntas!</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="concept-block">
+          <h2 class="concept-title">2. Chave Primária (PK), Chave Estrangeira (FK) e Integridade</h2>
+
+          <div class="step-card">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <h3>O que é</h3>
+              <p><strong>Chave Primária (PK):</strong> É o "CPF" ou "RG" de cada linha da tabela. É o número que não se repete nunca e garante que aquela linha seja única.<br>
+              <strong>Chave Estrangeira (FK):</strong> É um campo que você coloca na tabela para "apontar" para outra tabela (é a ponte de ligação).<br>
+              <strong>Integridade Referencial:</strong> É a regra que não deixa ninguém criar links quebrados no banco.</p>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <h3>Para que serve</h3>
+              <p>Serve para o banco não se perder. Sem a Chave Primária, você não saberia diferenciar dois clientes chamados "João da Silva". Sem a Chave Estrangeira, você não saberia qual cliente fez qual compra.</p>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <h3>Como funciona</h3>
+              <ul>
+                <li><strong>Duas regras da Chave Primária (PK):</strong>
+                  <br>1. Não pode ter valor repetido.
+                  <br>2. Não pode ficar em branco (nunca nula).
+                </li>
+                <li><strong>Como funciona a Chave Estrangeira (FK):</strong> Na tabela de Clientes, em vez de escrever o nome da cidade por extenso, você só anota o <code>CIDADE_ID</code>. O banco vai lá na tabela de Cidades e sabe exatamente qual cidade é.</li>
+                <li><strong>E se eu tentar apagar uma cidade que tem clientes?</strong>
+                  <br>• <em>Modo padrão (RESTRICT):</em> O banco <strong>proíbe</strong> e dá erro na hora. Ele diz: "Ei, não vou apagar Maringá porque ainda tem cliente morando lá!".
+                  <br>• <em>Modo cascata (CASCADE):</em> O banco apaga a cidade e, junto com ela, deleta todos os clientes que estavam nela.
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <h3>Exemplo simples</h3>
+              <div class="code-preview">
+                <span class="code-comment">-- Tabela CIDADE: quem manda (tem a PK)</span>
+                <code>ID: 1 | NOME: 'Maringá' | UF: 'PR'</code>
+                <br><br>
+                <span class="code-comment">-- Tabela CLIENTE: aponta pra cidade usando a FK</span>
+                <code>ID: 10 | NOME: 'Helena' | CIDADE_ID: 1   <-- Esse "1" é a FK!</code>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">5</div>
+            <div class="step-body">
+              <h3>Caso prático da vida real (O problema dos "dados órfãos")</h3>
+              <p>Imagine uma loja. Se alguém pudesse apagar o cliente "Carlos", mas as compras dele ficassem salvas no sistema, as notas fiscais ficariam sem dono ("órfãs"). Ninguém saberia quem comprou aquilo! A integridade referencial serve exatamente para proibir isso.</p>
+            </div>
+          </div>
+
+          <div class="step-card reminder-card">
+            <div class="step-num">6</div>
+            <div class="step-body">
+              <h3>O que preciso lembrar para a prova</h3>
+              <p>• A <strong>Chave Primária</strong> nunca pode ser nula e nunca se repete.<br>
+              • A <strong>Chave Estrangeira</strong> só pode guardar um código que já existe na outra tabela.<br>
+              • <strong>Integridade referencial</strong> é o que impede que existam registros órfãos (filhos sem pai).</p>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- TÓPICO 2: CARDINALIDADE                                  -->
+      <!-- ======================================================== -->
+      <section id="cardinalidade" class="content-section">
+        <header class="section-header">
+          <div class="topic-tag">Tópico 2</div>
+          <h1>Cardinalidade (Quem se liga com quem)</h1>
+          <p class="section-desc">É só descobrir a proporção das coisas: se uma coisa tem muitos da outra, ou se é muitos para muitos.</p>
+        </header>
+
+        <article class="concept-block">
+          <h2 class="concept-title">1. Relacionamento 1 : N (Um para Muitos)</h2>
+
+          <div class="step-card">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <h3>O que é</h3>
+              <p>É quando um lado da relação pode ter várias coisas do outro lado, mas o outro lado só pode ter uma.</p>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <h3>Para que serve</h3>
+              <p>É o tipo mais comum do mundo real. Serve para ligar coisas sem precisar repetir dados à toa.</p>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <h3>Como funciona (A regrinha de ouro que sempre cai na prova)</h3>
+              <p class="highlight-box alert">
+                ⚠️ <strong>REGRA DE OURO:</strong> Em qual tabela você coloca a Chave Estrangeira (o ID do outro)?<br>
+                <strong>SEMPRE NO LADO "MUITOS" (N)!</strong>
+              </p>
+              <p>Pensa comigo: 1 Cidade tem <strong>MUITOS</strong> clientes. Mas cada cliente mora em <strong>1</strong> cidade.<br>
+              Onde você coloca o código da cidade? No cadastro do <strong>CLIENTE</strong>!<br>
+              Se você tentasse colocar o código do cliente dentro da Cidade, como faria quando a cidade tivesse 10.000 clientes? Teria que criar 10.000 colunas de cliente na mesma linha da cidade! Não faz sentido nenhum.</p>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <h3>Exemplo simples</h3>
+              <p>• <strong>1 Fornecedor</strong> fornece para <strong>Muitas Compras</strong>.<br>
+              • Quem é o lado "muitos"? A <strong>COMPRA</strong>.<br>
+              • Então o campo <code>FORNECEDOR_ID</code> fica dentro da tabela <code>COMPRA</code>.</p>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">5</div>
+            <div class="step-body">
+              <h3>Caso prático da vida real</h3>
+              <p>Na escola ou faculdade: 1 Turma tem muitos Alunos. Na ficha de matrícula do aluno é que vem escrito o código da turma dele, e não o contrário.</p>
+            </div>
+          </div>
+
+          <div class="step-card reminder-card">
+            <div class="step-num">6</div>
+            <div class="step-body">
+              <h3>O que preciso lembrar para a prova</h3>
+              <p>Se o professor perguntar: <em>"O cliente nasce em uma cidade, mas a cidade tem muitos clientes. Onde fica a FK?"</em><br>
+              Resposta direta: <strong>Na tabela CLIENTE</strong>, porque a FK sempre vai para o lado "Muitos" (N)!</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="concept-block">
+          <h2 class="concept-title">2. Relacionamento N : N (Muitos para Muitos) e a Tabela do Meio</h2>
+
+          <div class="step-card">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <h3>O que é</h3>
+              <p>É quando os dois lados podem ter vários do outro. Exemplo: Uma Venda pode ter vários Produtos diferentes, e um mesmo Produto pode ser vendido em várias Vendas diferentes.</p>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <h3>Para que serve (O problema do N:N)</h3>
+              <p>Bancos de dados <strong>não conseguem ligar N:N direto</strong>. Não dá pra colocar a chave de um no outro. Para resolver isso, somos <strong>obrigados a criar uma tabelinha no meio</strong>, chamada de <strong>Tabela Associativa</strong> (ou intermediária).</p>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <h3>Como funciona a tabela do meio</h3>
+              <p>A tabela do meio (como <code>VENDA_ITENS</code>) pega o ID da Venda e o ID do Produto:</p>
+              <ul>
+                <li>Ela junta os dois IDs para criar uma <strong>Chave Primária Composta</strong> (chave dupla).</li>
+                <li>Guarda também o que aconteceu na hora: quantos itens foram levados (<code>QT</code>) e quanto custou cada um (<code>VL_UNIT</code>).</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <h3>Exemplo simples</h3>
+              <p>Veja a tabelinha <code>VENDA_ITENS</code> na prática:</p>
+              <div class="table-container">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>VENDA_ID (Código da Venda)</th>
+                      <th>PRODUTO_ID (Código do Produto)</th>
+                      <th>QT (Quantidade)</th>
+                      <th>VL_UNIT (Preço)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>501</td>
+                      <td>10 (Martelo)</td>
+                      <td>2</td>
+                      <td>R$ 20,00</td>
+                    </tr>
+                    <tr>
+                      <td>501</td>
+                      <td>11 (Prego)</td>
+                      <td>50</td>
+                      <td>R$ 0,20</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">5</div>
+            <div class="step-body">
+              <h3>Caso prático da vida real (A pegadinha clássica do professor!)</h3>
+              <p><strong>Cenário da lista de exercícios:</strong><br>
+              Na Venda <code>501</code>, o cliente já comprou o Produto <code>10</code> (Martelo). Se ele resolver levar mais 5 martelos na mesma venda, o caixa pode tentar cadastrar uma linha nova com <code>(501, 10)</code>?<br>
+              <strong>Resposta:</strong> <strong>NÃO PODE!</strong> Porque o par <code>501 e 10</code> é a Chave Primária. Se tentar inserir de novo, o banco dá erro de duplicação. O sistema tem que atualizar (dar UPDATE) na linha que já existe, mudando a quantidade de 2 para 7!</p>
+            </div>
+          </div>
+
+          <div class="step-card reminder-card">
+            <div class="step-num">6</div>
+            <div class="step-body">
+              <h3>O que preciso lembrar para a prova</h3>
+              <p>• Relacionamento N:N <strong>sempre gera uma tabela associativa</strong> (tabela intermediária).<br>
+              • Na tabela associativa, as duas FKs juntas viram uma <strong>Chave Primária Composta</strong>.</p>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- TÓPICO 3: NORMALIZAÇÃO                                   -->
+      <!-- ======================================================== -->
+      <section id="normalizacao" class="content-section">
+        <header class="section-header">
+          <div class="topic-tag">Tópico 3</div>
+          <h1>Normalização (Organizar as gavetas)</h1>
+          <p class="section-desc">Pense na normalização como arrumar um guarda-roupa bagunçado em gavetas separadas para não perder nada.</p>
+        </header>
+
+        <article class="concept-block">
+          <h2 class="concept-title">1. Por que normalizar? As 3 dores de cabeça (Anomalias)</h2>
+          <p>Se você colocar tudo misturado numa tabela só (tipo um tabelão gigante do Excel), você vai ter 3 problemas:</p>
+          <div class="term-grid">
+            <div class="term-card">
+              <strong class="term-formal">Anomalia de Inserção</strong>
+              <span class="term-desc">Você quer cadastrar um produto novo na loja, mas o sistema não deixa porque ninguém comprou ele ainda. Você fica travado.</span>
+            </div>
+            <div class="term-card">
+              <strong class="term-formal">Anomalia de Atualização</strong>
+              <span class="term-desc">O cliente mudou de telefone. Como o telefone dele estava copiado em 50 compras antigas, você atualiza em uma e esquece nas outras. Os dados ficam bagunçados.</span>
+            </div>
+            <div class="term-card">
+              <strong class="term-formal">Anomalia de Exclusão</strong>
+              <span class="term-desc">Você cancela uma venda e, sem querer, o sistema apaga o cliente do banco porque ele só existia naquela linha daquela venda.</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="concept-block">
+          <h2 class="concept-title">2. Primeira Forma Normal (1FN) - Cada coisa no seu quadrado</h2>
+
+          <div class="step-card">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <h3>O que é</h3>
+              <p>Significa que <strong>cada campo só pode ter um único valor</strong> (tem que ser "atômico", ou seja, indivisível). Nada de listas ou múltiplos valores amontoados na mesma caixinha.</p>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <h3>Para que serve</h3>
+              <p>Para você conseguir pesquisar e filtrar. Se tiver dois telefones na mesma coluna, como o sistema busca quem tem o DDD 44?</p>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <h3>Como funciona</h3>
+              <ul>
+                <li>❌ <strong>Errado (Quebra a 1FN):</strong> Colocar na coluna Telefone: <code>"9999-1111, 8888-2222"</code>.</li>
+                <li>❌ <strong>Também errado:</strong> Fazer colunas repetidas: <code>Telefone1</code>, <code>Telefone2</code>, <code>Telefone3</code>.</li>
+                <li>✔️ <strong>Certo (1FN):</strong> Cada linha tem apenas um telefone, ou cria-se uma tabelinha separada para telefones.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <h3>Exemplo simples</h3>
+              <p>O campo <code>ENDERECO: "Av Brasil, 1500, Maringá, PR"</code>. Para estar 100% na 1FN, quebre em colunas separadas: Rua, Número, Cidade e Estado.</p>
+            </div>
+          </div>
+
+          <div class="step-card reminder-card">
+            <div class="step-num">6</div>
+            <div class="step-body">
+              <h3>O que preciso lembrar para a prova</h3>
+              <p>Se a questão da prova mostrar: <em>"O campo Telefone guarda vários números separados por vírgula. Qual forma normal foi violada?"</em><br>
+              Resposta na lata: <strong>1FN (Primeira Forma Normal)</strong>! A palavra-chave é <strong>ATOMICIDADE</strong>.</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="concept-block">
+          <h2 class="concept-title">3. Segunda Forma Normal (2FN) - Não misture o produto com a venda</h2>
+
+          <div class="step-card">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <h3>O que é</h3>
+              <p>A tabela já tem que estar na 1FN. A regra é: <strong>todos os campos têm que depender da chave inteira, e não só de metade dela</strong>.</p>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <h3>Para que serve</h3>
+              <p>Evita repetir dados de produtos toda vez que uma venda é feita.</p>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <h3>Como funciona (O segredo da 2FN)</h3>
+              <p class="highlight-box info">
+                💡 <strong>Preste muita atenção nisso:</strong><br>
+                Se a tabela tiver uma chave simples (só o <code>ID</code>), e já estiver na 1FN, <strong>ela já está automaticamente na 2FN!</strong><br>
+                A 2FN <strong>só dá problema quando a tabela tem chave composta</strong> (tipo <code>VENDA_ITENS</code>, que junta Venda_ID + Produto_ID).
+              </p>
+              <p>Pense assim: na tabela <code>VENDA_ITENS</code>, o campo <code>DESCRICAO_DO_PRODUTO</code> depende da venda? Não! O Martelo continua sendo Martelo em qualquer venda. A descrição depende <strong>só do Produto</strong>, e não da Venda. Por isso, a descrição não pode ficar aí!</p>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <h3>Exemplo simples</h3>
+              <p>Tire a <code>DESCRICAO_DO_PRODUTO</code> de <code>VENDA_ITENS</code> e deixe-a guardada apenas na tabela <code>PRODUTO</code>. Em <code>VENDA_ITENS</code> fica só a <code>QUANTIDADE</code> vendida.</p>
+            </div>
+          </div>
+
+          <div class="step-card reminder-card">
+            <div class="step-num">6</div>
+            <div class="step-body">
+              <h3>O que preciso lembrar para a prova</h3>
+              <p>Se cair na prova: <em>"Na tabela VENDA_ITENS (Venda_ID, Produto_ID), colocamos a coluna Nome_Produto. Qual regra foi violada?"</em><br>
+              Resposta: <strong>Violou a 2FN</strong>, porque o nome do produto depende só de parte da chave (depende só do Produto_ID).</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="concept-block">
+          <h2 class="concept-title">4. Terceira Forma Normal (3FN) - Não misture a Cidade com o Cliente</h2>
+
+          <div class="step-card">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <h3>O que é</h3>
+              <p>A tabela já tem que estar na 2FN. A regra é: <strong>um campo comum não pode depender de outro campo comum</strong>. Todo mundo tem que depender direto da Chave Primária.</p>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <h3>Para que serve</h3>
+              <p>Serve para não ficar repetindo informações que deveriam ter sua própria tabela.</p>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <h3>Como funciona</h3>
+              <p>Imagine a tabela: <code>CLIENTE (ID, NOME, CIDADE_ID, NOME_CIDADE, UF)</code>.</p>
+              <ul>
+                <li>O <code>NOME</code> depende do cliente (Beleza!).</li>
+                <li>Mas <code>NOME_CIDADE</code> e <code>UF</code> dependem do cliente? Não! Dependem do <code>CIDADE_ID</code>!</li>
+                <li>Maringá não é do Paraná por causa do cliente João; ela é do Paraná por conta da própria cidade. Isso é o que chamamos de <em>dependência transitiva</em>.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <h3>Exemplo simples (Como consertar)</h3>
+              <p>Tire <code>NOME_CIDADE</code> e <code>UF</code> da tabela de Clientes e crie uma tabela própria chamada <code>CIDADE</code>. No Cliente você só deixa o <code>CIDADE_ID</code>.</p>
+            </div>
+          </div>
+
+          <div class="step-card reminder-card">
+            <div class="step-num">6</div>
+            <div class="step-body">
+              <h3>O que preciso lembrar para a prova</h3>
+              <p>A <strong>3FN</strong> é o motivo de separarmos <strong>Cidade</strong> de <strong>Cliente</strong>! Se o campo não depende do ID do cliente, ele tem que ir pra tabela dele.</p>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- TÓPICO 4: CREATE TABLE                                   -->
+      <!-- ======================================================== -->
+      <section id="create-table" class="content-section">
+        <header class="section-header">
+          <div class="topic-tag">Tópico 4</div>
+          <h1>Create Table (Criando as tabelas no código)</h1>
+          <p class="section-desc">É a receita de bolo em SQL para mandar o computador criar as tabelas com os tipos certos.</p>
+        </header>
+
+        <article class="concept-block">
+          <h2 class="concept-title">1. Os tipos de dados que o professor usa</h2>
+          <div class="term-grid">
+            <div class="term-card">
+              <strong class="term-formal">INT</strong>
+              <span class="term-desc">Para números inteiros, sem vírgula (ex: códigos de ID, quantidades).</span>
+            </div>
+            <div class="term-card">
+              <strong class="term-formal">VARCHAR(100)</strong>
+              <span class="term-desc">Para textos com tamanho que varia até 100 letras (ex: Nomes, Ruas).</span>
+            </div>
+            <div class="term-card">
+              <strong class="term-formal">CHAR(2)</strong>
+              <span class="term-desc">Para texto de tamanho exato e fixo (ex: Estado tem sempre 2 letras: 'PR', 'SP').</span>
+            </div>
+            <div class="term-card">
+              <strong class="term-formal">DECIMAL(10,2)</strong>
+              <span class="term-desc">Para dinheiro e preços (guarda números com 2 casas decimais depois da vírgula).</span>
+            </div>
+            <div class="term-card">
+              <strong class="term-formal">DATE</strong>
+              <span class="term-desc">Para datas (formato ano-mês-dia: '2026-09-19').</span>
+            </div>
+            <div class="term-card">
+              <strong class="term-formal">PRIMARY KEY</strong>
+              <span class="term-desc">Avisa o banco que aquele campo é a Chave Primária.</span>
+            </div>
+            <div class="term-card">
+              <strong class="term-formal">FOREIGN KEY</strong>
+              <span class="term-desc">Avisa o banco que aquele campo é a Chave Estrangeira ligada em outra tabela.</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="concept-block">
+          <h2 class="concept-title">2. Como escrever os 3 tipos de tabelas que caem na prova</h2>
+
+          <div class="step-card">
+            <div class="step-num">A</div>
+            <div class="step-body">
+              <h3>Tipo 1: Tabela Simples (ex: CIDADE)</h3>
+              <p>Essa não depende de ninguém, então é a primeira a ser criada:</p>
+              <pre class="sql-code"><code>CREATE TABLE CIDADE(
+    ID INT PRIMARY KEY,
+    NOME VARCHAR(100),
+    UF CHAR(2)
+);</code></pre>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">B</div>
+            <div class="step-body">
+              <h3>Tipo 2: Tabela com Ligação/FK (ex: CLIENTE)</h3>
+              <p>Tem o campo <code>CIDADE_ID</code> que aponta para o <code>ID</code> de <code>CIDADE</code>:</p>
+              <pre class="sql-code"><code>CREATE TABLE CLIENTE(
+    ID INT NOT NULL PRIMARY KEY,
+    CIDADE_ID INT NOT NULL,
+    NOME VARCHAR(100),
+    ENDERECO VARCHAR(150),
+    FONE VARCHAR(20),
+    DATA_NASC DATE,
+    FOREIGN KEY(CIDADE_ID) REFERENCES CIDADE(ID)
+);</code></pre>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">C</div>
+            <div class="step-body">
+              <h3>Tipo 3: Tabela do Meio N:N com Chave Dupla (ex: VENDA_ITENS)</h3>
+              <p>Junta os dois IDs para criar a Chave Primária Composta:</p>
+              <pre class="sql-code"><code>CREATE TABLE VENDA_ITENS(
+    PRODUTO_ID INT NOT NULL,
+    VENDA_ID INT NOT NULL,
+    VL_UNIT DECIMAL(10,2),
+    QT INT NOT NULL,
+    VL_TOTAL DECIMAL(10,2),
+    PRIMARY KEY (PRODUTO_ID, VENDA_ID),
+    FOREIGN KEY (VENDA_ID) REFERENCES VENDA(ID),
+    FOREIGN KEY (PRODUTO_ID) REFERENCES PRODUTO(ID)
+);</code></pre>
+            </div>
+          </div>
+
+          <div class="step-card reminder-card">
+            <div class="step-num">6</div>
+            <div class="step-body">
+              <h3>O que preciso lembrar para a prova</h3>
+              <p>
+                <strong>1. A ordem importa:</strong> Você não pode criar a tabela CLIENTE antes de criar a tabela CIDADE, porque o cliente precisa apontar para uma cidade que já existe!<br>
+                <strong>2. Chave dupla:</strong> Se escreve no final: <code>PRIMARY KEY (campo1, campo2)</code>.<br>
+                <strong>3. Chave estrangeira:</strong> A regrinha é sempre <code>FOREIGN KEY (campo_daqui) REFERENCES tabela_de_la(campo_de_la)</code>.
+              </p>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- SEÇÃO: TREINAR QUESTÕES (EXERCÍCIOS)                     -->
+      <!-- ======================================================== -->
+      <section id="treinar" class="content-section">
+        <header class="section-header">
+          <div class="topic-tag">Área Prática</div>
+          <h1>Treinar para a Prova</h1>
+          <p class="section-desc">Escolha o tema e o <strong>grau de dificuldade</strong> que deseja praticar. As alternativas foram feitas para desafiar seu raciocínio real!</p>
+        </header>
+
+        <!-- Filtros de Exercícios com Seletor de Dificuldade -->
+        <div class="quiz-controls">
+          <div class="filters-wrapper">
+            <div class="filter-group">
+              <label for="topicFilter">Tema:</label>
+              <select id="topicFilter" class="select-input">
+                <option value="todos">🔀 Todos os Assuntos</option>
+                <option value="modelo-relacional">🗄️ Modelo Relacional</option>
+                <option value="cardinalidade">🔗 Cardinalidade</option>
+                <option value="normalizacao">📐 Normalização</option>
+                <option value="create-table">💻 Create Table</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label for="difficultyFilter">Dificuldade:</label>
+              <select id="difficultyFilter" class="select-input">
+                <option value="todos">⭐ Todas as Dificuldades</option>
+                <option value="facil">🟢 Fácil (Conceitos Diretos)</option>
+                <option value="medio">🟡 Médio (Casos Práticos)</option>
+                <option value="dificil">🔴 Difícil (Estilo Prova & Pegadinhas)</option>
+              </select>
+            </div>
+          </div>
+
+          <button id="resetQuizStateBtn" class="btn-secondary">Reiniciar Tentativas Deste Filtro</button>
+        </div>
+
+        <div class="quiz-status-bar">
+          <span id="quizCountLabel">Exibindo questões...</span>
+        </div>
+
+        <div id="questionsContainer" class="questions-list"></div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- SEÇÃO: MEU DESEMPENHO                                    -->
+      <!-- ======================================================== -->
+      <section id="desempenho" class="content-section">
+        <header class="section-header">
+          <div class="topic-tag">Estatísticas</div>
+          <h1>Meu Desempenho</h1>
+          <p class="section-desc">Veja quantas você acertou. Seus pontos ficam salvos automaticamente mesmo se você fechar ou atualizar a página.</p>
+        </header>
+
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <span class="metric-icon">📝</span>
+            <span class="metric-title">Respondidas</span>
+            <strong class="metric-value" id="statTotalAnswered">0</strong>
+            <small class="metric-subtitle">de <span id="statTotalAvailable">0</span> questões</small>
+          </div>
+
+          <div class="metric-card success">
+            <span class="metric-icon">✅</span>
+            <span class="metric-title">Acertos</span>
+            <strong class="metric-value" id="statCorrect">0</strong>
+            <small class="metric-subtitle">mandou bem!</small>
+          </div>
+
+          <div class="metric-card danger">
+            <span class="metric-icon">❌</span>
+            <span class="metric-title">Erros</span>
+            <strong class="metric-value" id="statIncorrect">0</strong>
+            <small class="metric-subtitle">para revisar</small>
+          </div>
+
+          <div class="metric-card highlight">
+            <span class="metric-icon">🎯</span>
+            <span class="metric-title">Aproveitamento</span>
+            <strong class="metric-value" id="statAccuracy">0%</strong>
+            <small class="metric-subtitle" id="statFeedbackMsg">Comece a treinar!</small>
+          </div>
+        </div>
+
+        <div class="card-box progress-box">
+          <div class="progress-box-header">
+            <h3>Seu progresso total no simulado</h3>
+            <span id="progressPercentageText">0% concluído</span>
+          </div>
+          <div class="progress-bar-large">
+            <div class="progress-bar-fill-large" id="mainProgressFill" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <div class="card-box">
+          <h3>Como você está em cada assunto</h3>
+          <div class="topic-stats-list" id="topicStatsList"></div>
+        </div>
+
+        <div class="danger-zone">
+          <div>
+            <strong>Quer recomeçar do zero?</strong>
+            <p>Isso zera todas as suas respostas salvas para você poder treinar tudo de novo.</p>
+          </div>
+          <button id="clearStorageBtn" class="btn-danger">Zerar Meu Desempenho</button>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Script Embutido -->
+  <script>
+    // ==========================================================================
+    // 1. BANCO DE QUESTÕES COM GRAU DE DIFICULDADE (FÁCIL / MÉDIO / DIFÍCIL)
+    // ==========================================================================
+    const QUIZ_DATA = [
+      // ------------------------------------------------------------------------
+      // MODELO RELACIONAL
+      // ------------------------------------------------------------------------
+      {
+        id: 1,
+        topic: 'modelo-relacional',
+        topicLabel: 'Modelo Relacional',
+        difficulty: 'facil',
+        difficultyLabel: 'Fácil',
+        type: 'Nomenclatura Técnica',
+        question: 'No Modelo Relacional ensinado pelo professor, como são chamados tecnicamente os termos do dia a dia "Tabela", "Linha" e "Coluna"?',
+        options: [
+          { text: 'Relação, Tupla e Atributo', correct: true },
+          { text: 'Entidade, Registro e Campo', correct: false },
+          { text: 'Relação, Campo e Tupla', correct: false },
+          { text: 'Instância, Tupla e Domínio', correct: false }
+        ],
+        explanation: 'Correspondência oficial: Tabela = Relação; Linha = Tupla; Coluna = Atributo. Essa equivalência é indispensável para a prova.'
+      },
+      {
+        id: 2,
+        topic: 'modelo-relacional',
+        topicLabel: 'Modelo Relacional',
+        difficulty: 'facil',
+        difficultyLabel: 'Fácil',
+        type: 'Conceito Direto',
+        question: 'Quais são as duas exigências obrigatórias para que uma coluna funcione como Chave Primária (PK) de uma tabela?',
+        options: [
+          { text: 'Conter apenas números inteiros e ter tamanho fixo.', correct: false },
+          { text: 'Não aceitar valores nulos (NOT NULL) e possuir valores únicos sem repetição.', correct: true },
+          { text: 'Apontar para outra tabela existente e aceitar valores em branco.', correct: false },
+          { text: 'Ter o mesmo nome da tabela e ser do tipo texto.', correct: false }
+        ],
+        explanation: 'A Chave Primária obrigatoriamente deve ser única (não se repete) e não nula (NOT NULL). Ela não precisa ser exclusivamente numérica, embora números sejam o padrão.'
+      },
+      {
+        id: 3,
+        topic: 'modelo-relacional',
+        topicLabel: 'Modelo Relacional',
+        difficulty: 'medio',
+        difficultyLabel: 'Médio',
+        type: 'Integridade Referencial',
+        question: 'Considere a tabela CLIENTE com o campo CIDADE_ID apontando para CIDADE. O que ocorre se você tentar cadastrar um cliente informando CIDADE_ID = 99, sendo que a cidade 99 não existe na tabela CIDADE?',
+        options: [
+          { text: 'O banco cadastra o cliente normalmente e deixa a cidade pendente.', correct: false },
+          { text: 'O banco cria automaticamente a cidade 99 com nome em branco.', correct: false },
+          { text: 'O banco rejeita a inserção por violação da regra de Integridade Referencial.', correct: true },
+          { text: 'O banco cadastra o cliente alterando o CIDADE_ID para 1 por padrão.', correct: false }
+        ],
+        explanation: 'A Integridade Referencial não permite inserir um valor de Chave Estrangeira que não exista previamente na Chave Primária da tabela de destino.'
+      },
+      {
+        id: 4,
+        topic: 'modelo-relacional',
+        topicLabel: 'Modelo Relacional',
+        difficulty: 'dificil',
+        difficultyLabel: 'Difícil',
+        type: 'Estilo Prova - Exclusão',
+        question: 'A cidade de Maringá (ID 1) possui 50 clientes vinculados. Se o administrador tentar executar a exclusão da cidade (DELETE FROM CIDADE WHERE ID = 1), sob qual condição o banco apagará os 50 clientes automaticamente sem emitir erro de bloqueio?',
+        options: [
+          { text: 'Se a chave estrangeira foi configurada com a cláusula ON DELETE RESTRICT.', correct: false },
+          { text: 'Se a chave estrangeira foi configurada com a cláusula ON DELETE CASCADE.', correct: true },
+          { text: 'Se a tabela CIDADE tiver menos de 100 registros gravados.', correct: false },
+          { text: 'O banco de dados relacional nunca permite exclusão automática em cascata por motivos de segurança.', correct: false }
+        ],
+        explanation: 'A cláusula ON DELETE CASCADE propaga a exclusão do registro pai para todos os registros filhos dependentes. O modo padrão (sem cascade) é o RESTRICT/NO ACTION, que bloqueia a exclusão.'
+      },
+
+      // ------------------------------------------------------------------------
+      // CARDINALIDADE
+      // ------------------------------------------------------------------------
+      {
+        id: 5,
+        topic: 'cardinalidade',
+        topicLabel: 'Cardinalidade',
+        difficulty: 'facil',
+        difficultyLabel: 'Fácil',
+        type: 'Regra de Posicionamento',
+        question: 'Em uma relação 1 : N entre FORNECEDOR (1) e COMPRA (N), em qual tabela deve ser criada a Chave Estrangeira (FK)?',
+        options: [
+          { text: 'Na tabela COMPRA, pois a FK sempre se posiciona no lado N (Muitos).', correct: true },
+          { text: 'Na tabela FORNECEDOR, pois ele é a entidade principal da negociação.', correct: false },
+          { text: 'Obrigatoriamente em uma tabela intermediária criada para compras.', correct: false },
+          { text: 'Nas duas tabelas ao mesmo tempo para criar vínculo duplo.', correct: false }
+        ],
+        explanation: 'Regra geral de modelagem: em relacionamentos 1:N, a chave estrangeira fica SEMPRE na tabela do lado N ("Muitos"). Logo, FORNECEDOR_ID fica em COMPRA.'
+      },
+      {
+        id: 6,
+        topic: 'cardinalidade',
+        topicLabel: 'Cardinalidade',
+        difficulty: 'medio',
+        difficultyLabel: 'Médio',
+        type: 'Tabela Associativa',
+        question: 'Em um sistema hospitalar, temos MÉDICO e PACIENTE: um médico atende muitos pacientes, e um paciente pode ser atendido por muitos médicos (N:N). Como esse modelo é estruturado fisicamente no banco?',
+        options: [
+          { text: 'Coloca-se o PACIENTE_ID dentro da tabela MÉDICO.', correct: false },
+          { text: 'Coloca-se o MEDICO_ID dentro da tabela PACIENTE.', correct: false },
+          { text: 'Cria-se uma tabela associativa (ex: CONSULTA) contendo as FKs de Médico e Paciente formando a PK composta.', correct: true },
+          { text: 'Cria-se uma coluna de texto contendo os nomes dos médicos separados por ponto e vírgula.', correct: false }
+        ],
+        explanation: 'Relacionamento N:N nunca liga as duas tabelas diretamente. É obrigatório criar uma tabela intermediária associativa que recebe as chaves de ambos.'
+      },
+      {
+        id: 7,
+        topic: 'cardinalidade',
+        topicLabel: 'Cardinalidade',
+        difficulty: 'dificil',
+        difficultyLabel: 'Difícil',
+        type: 'Pegadinha Real da Lista 1',
+        question: 'Na tabela VENDA_ITENS, a Chave Primária Composta é (VENDA_ID, PRODUTO_ID). Na venda 501, já consta o produto 10 (Martelo, quantidade 2). O cliente decide comprar mais 5 martelos na mesma venda. Por que o sistema NÃO pode executar um novo comando "INSERT INTO VENDA_ITENS VALUES (501, 10, 5, 20.00, 100.00)"?',
+        options: [
+          { text: 'Porque o banco acusará erro de violação de Chave Estrangeira em PRODUTO_ID.', correct: false },
+          { text: 'Porque violará a restrição de Unicidade da Chave Primária Composta (o par 501, 10 já existe). O correto é executar um comando UPDATE na quantidade existente.', correct: true },
+          { text: 'Porque o preço unitário do martelo teria que ser dividido pela nova quantidade.', correct: false },
+          { text: 'Porque tabelas associativas só aceitam uma única linha por nota de venda.', correct: false }
+        ],
+        explanation: 'Em uma Chave Primária Composta, a combinação exata das colunas não pode se repetir! Como (501, 10) já existe na tabela, um novo INSERT com esses mesmos valores é rejeitado pelo banco. A forma correta é dar UPDATE na quantidade para 7.'
+      },
+      {
+        id: 8,
+        topic: 'cardinalidade',
+        topicLabel: 'Cardinalidade',
+        difficulty: 'dificil',
+        difficultyLabel: 'Difícil',
+        type: 'Rastreamento de Dados (Lista 1)',
+        question: 'Analise o fluxo de dados comerciais: CIDADE (1) ---> (N) CLIENTE (1) ---> (N) VENDA (1) ---> (N) VENDA_ITENS (N) <--- (1) PRODUTO. Para descobrir em qual cidade reside o comprador de um produto específico, qual é a sequência correta de junção de chaves?',
+        options: [
+          { text: 'PRODUTO -> CIDADE -> CLIENTE -> VENDA', correct: false },
+          { text: 'PRODUTO -> VENDA_ITENS (via PRODUTO_ID) -> VENDA (via VENDA_ID) -> CLIENTE (via CLIENTE_ID) -> CIDADE (via CIDADE_ID)', correct: true },
+          { text: 'VENDA_ITENS -> CLIENTE -> CIDADE diretamente por CIDADE_ID', correct: false },
+          { text: 'CIDADE -> PRODUTO -> VENDA_ITENS -> CLIENTE', correct: false }
+        ],
+        explanation: 'Para rastrear a cidade de quem comprou o produto, o banco segue o caminho das FKs: parte de Produto até Venda_Itens, sobe para Venda, alcança o Cliente comprador e chega na Cidade onde ele mora.'
+      },
+
+      // ------------------------------------------------------------------------
+      // NORMALIZAÇÃO
+      // ------------------------------------------------------------------------
+      {
+        id: 9,
+        topic: 'normalizacao',
+        topicLabel: 'Normalização',
+        difficulty: 'facil',
+        difficultyLabel: 'Fácil',
+        type: 'Primeira Forma Normal',
+        question: 'Um cadastro de clientes armazena múltiplos e-mails no mesmo campo: "joao@email.com; joao.trabalho@empresa.com". Qual Forma Normal está sendo violada?',
+        options: [
+          { text: 'Terceira Forma Normal (3FN), por dependência funcional.', correct: false },
+          { text: 'Segunda Forma Normal (2FN), por falta de chave composta.', correct: false },
+          { text: 'Primeira Forma Normal (1FN), pois ela exige atomicidade e proíbe atributos multivalorados.', correct: true },
+          { text: 'Quarta Forma Normal (4FN), por excesso de caracteres.', correct: false }
+        ],
+        explanation: 'A 1FN exige que cada campo contenha apenas um valor único e indivisível (atômico). Guardar mais de um e-mail na mesma célula quebra a 1FN.'
+      },
+      {
+        id: 10,
+        topic: 'normalizacao',
+        topicLabel: 'Normalização',
+        difficulty: 'medio',
+        difficultyLabel: 'Médio',
+        type: 'Anomalias de Dados',
+        question: 'Em uma concessionária, os dados dos carros e de suas revisões estão em uma única tabela não-normalizada. Quando a última revisão de um carro antigo é excluída do sistema, os dados do próprio carro são apagados sem querer. Qual anomalia ocorreu?',
+        options: [
+          { text: 'Anomalia de Inserção.', correct: false },
+          { text: 'Anomalia de Atualização.', correct: false },
+          { text: 'Anomalia de Exclusão.', correct: true },
+          { text: 'Anomalia de Redundância Transitiva.', correct: false }
+        ],
+        explanation: 'A Anomalia de Exclusão acontece quando a remoção de um registro secundário causa a perda involuntária de informações importantes que não tinham tabela própria.'
+      },
+      {
+        id: 11,
+        topic: 'normalizacao',
+        topicLabel: 'Normalização',
+        difficulty: 'medio',
+        difficultyLabel: 'Médio',
+        type: 'Segunda Forma Normal',
+        question: 'Para que uma tabela esteja de acordo com a Segunda Forma Normal (2FN), quais são os dois requisitos fundamentais?',
+        options: [
+          { text: 'Estar na 1FN e todos os atributos não-chave dependerem da Chave Primária inteira (sem dependência parcial).', correct: true },
+          { text: 'Estar na 3FN e não possuir nenhuma chave estrangeira.', correct: false },
+          { text: 'Estar na 1FN e possuir apenas colunas de texto.', correct: false },
+          { text: 'Possuir no máximo duas tabelas associadas no banco.', correct: false }
+        ],
+        explanation: 'A 2FN exige: 1º Estar na 1FN; 2º Dependência Funcional Total (nenhum campo pode depender de apenas uma parte de uma chave primária composta).'
+      },
+      {
+        id: 12,
+        topic: 'normalizacao',
+        topicLabel: 'Normalização',
+        difficulty: 'dificil',
+        difficultyLabel: 'Difícil',
+        type: 'Pegadinha 2FN vs 3FN (Lista 2)',
+        question: 'Considere a tabela associativa VENDA_ITENS (VENDA_ID, PRODUTO_ID, VL_UNIT, QT, PRODUTO_NOME). O campo PRODUTO_NOME viola a 2FN ou a 3FN, e por quê?',
+        options: [
+          { text: 'Viola a 3FN, porque PRODUTO_NOME é um campo não-chave dependendo de QT (outro campo não-chave).', correct: false },
+          { text: 'Viola a 2FN, porque PRODUTO_NOME depende apenas de PRODUTO_ID (parte da chave primária composta), e não da venda.', correct: true },
+          { text: 'Viola a 1FN, porque nomes de produtos possuem espaços e não são atômicos.', correct: false },
+          { text: 'Não viola nenhuma forma normal, pois todo item de venda precisa exibir o nome do produto.', correct: false }
+        ],
+        explanation: 'Essa é a clássica pegadinha de prova: como a chave primária é composta (VENDA_ID + PRODUTO_ID), o nome do produto depende exclusivamente de PRODUTO_ID (dependência parcial). Logo, viola a 2FN!'
+      },
+      {
+        id: 13,
+        topic: 'normalizacao',
+        topicLabel: 'Normalização',
+        difficulty: 'dificil',
+        difficultyLabel: 'Difícil',
+        type: 'Terceira Forma Normal (Lista 2)',
+        question: 'Na tabela CLIENTE (ID, NOME, CIDADE_ID, CIDADE_NOME, CIDADE_UF), a Chave Primária é simples (ID). Por que essa estrutura viola a 3ª Forma Normal (3FN)?',
+        options: [
+          { text: 'Porque CIDADE_NOME e CIDADE_UF dependem de CIDADE_ID (atributo não-chave determinando outros atributos não-chave, gerando dependência transitiva).', correct: true },
+          { text: 'Porque a chave primária ID é simples, e a 3FN exige obrigatoriamente chave composta.', correct: false },
+          { text: 'Porque viola a 2FN por dependência parcial da chave ID.', correct: false },
+          { text: 'Porque o estado (UF) possui 2 letras e quebra a atomicidade da 1FN.', correct: false }
+        ],
+        explanation: 'Na tabela Cliente, a PK é ID. Os campos CIDADE_NOME e CIDADE_UF dependem de CIDADE_ID (que não é a PK de cliente). Essa dependência indireta (transitiva) entre atributos não-chave viola a 3FN. Solução: mover para a tabela CIDADE.'
+      },
+      {
+        id: 14,
+        topic: 'normalizacao',
+        topicLabel: 'Normalização',
+        difficulty: 'dificil',
+        difficultyLabel: 'Difícil',
+        type: 'Regra de Chave Simples',
+        question: 'Se uma tabela possui Chave Primária Simples (formada por apenas UMA coluna, ex: PRODUTO com ID) e já está na 1FN, ela pode violar a 2FN?',
+        options: [
+          { text: 'Sim, se possuir mais de 5 colunas cadastradas.', correct: false },
+          { text: 'Sim, caso tenha campos de data e valor monetário juntos.', correct: false },
+          { text: 'Não, pois para violar a 2FN é obrigatório existir dependência de "parte de chave", o que só existe em Chaves Compostas.', correct: true },
+          { text: 'Sim, pois a 2FN analisa dependência entre atributos não-chave.', correct: false }
+        ],
+        explanation: 'Fato crucial de prova: toda tabela com Chave Primária Simples que já está na 1FN está AUTOMATICAMENTE na 2FN, pois não há como depender de "metade" de uma chave de uma coluna só!'
+      },
+
+      // ------------------------------------------------------------------------
+      // CREATE TABLE
+      // ------------------------------------------------------------------------
+      {
+        id: 15,
+        topic: 'create-table',
+        topicLabel: 'Create Table',
+        difficulty: 'facil',
+        difficultyLabel: 'Fácil',
+        type: 'Sintaxe SQL',
+        question: 'No código do professor, qual comando cria a tabela CIDADE com a coluna ID inteira e chave primária, Nome e UF?',
+        options: [
+          { text: 'CREATE TABLE CIDADE ( ID INT PRIMARY KEY, NOME VARCHAR(100), UF CHAR(2) );', correct: true },
+          { text: 'ADD TABLE CIDADE ( ID INT NOT NULL, NOME VARCHAR(100), UF STRING(2) );', correct: false },
+          { text: 'CREATE TABLE CIDADE [ ID PRIMARY KEY, NOME TEXT, UF CHAR ];', correct: false },
+          { text: 'NEW TABLE CIDADE ( ID INT, NOME VARCHAR(100), UF CHAR(2) );', correct: false }
+        ],
+        explanation: 'A instrução padrão da DDL SQL é "CREATE TABLE nome ( col tipo restrições... );". Para UF fixa de 2 caracteres, usa-se CHAR(2).'
+      },
+      {
+        id: 16,
+        topic: 'create-table',
+        topicLabel: 'Create Table',
+        difficulty: 'medio',
+        difficultyLabel: 'Médio',
+        type: 'Ordem de Criação DDL',
+        question: 'Ao executar um script SQL para criar as tabelas COMPRA (com FORNECEDOR_ID referenciando FORNECEDOR) e a própria tabela FORNECEDOR, qual deve ser criada primeiro?',
+        options: [
+          { text: 'A tabela FORNECEDOR deve ser criada primeiro, pois a tabela COMPRA faz referência à sua chave primária.', correct: true },
+          { text: 'A tabela COMPRA deve ser criada primeiro, porque é a tabela que gera receita.', correct: false },
+          { text: 'A ordem não importa no SQL, pois o banco compila tudo em lote no final.', correct: false },
+          { text: 'Elas precisam obrigatoriamente ser criadas no mesmo comando CREATE TABLE.', correct: false }
+        ],
+        explanation: 'A tabela "pai" (referenciada) SEMPRE deve existir antes da tabela "filha" (que contém a FK). Se tentar criar COMPRA antes de FORNECEDOR, o banco acusará erro de tabela referenciada inexistente.'
+      },
+      {
+        id: 17,
+        topic: 'create-table',
+        topicLabel: 'Create Table',
+        difficulty: 'dificil',
+        difficultyLabel: 'Difícil',
+        type: 'Chave Composta na DDL',
+        question: 'Qual das opções abaixo declara de forma sintaticamente CORRETA uma Chave Primária Composta de PRODUTO_ID e VENDA_ID no comando CREATE TABLE?',
+        options: [
+          { text: 'PRODUTO_ID INT PRIMARY KEY, VENDA_ID INT PRIMARY KEY, VL_UNIT DECIMAL(10,2)', correct: false },
+          { text: 'PRODUTO_ID INT NOT NULL, VENDA_ID INT NOT NULL, VL_UNIT DECIMAL(10,2), PRIMARY KEY (PRODUTO_ID, VENDA_ID)', correct: true },
+          { text: 'PRODUTO_ID INT NOT NULL, VENDA_ID INT NOT NULL, PRIMARY KEY = (PRODUTO_ID + VENDA_ID)', correct: false },
+          { text: 'COMPOSITE KEY (PRODUTO_ID, VENDA_ID) REFERENCES VENDA_ITENS', correct: false }
+        ],
+        explanation: 'No SQL não se pode usar a palavra "PRIMARY KEY" duas vezes em colunas separadas (isso geraria erro de chave primária duplicada na tabela). A declaração de chave composta é feita no final: PRIMARY KEY (coluna1, coluna2).'
+      },
+      {
+        id: 18,
+        topic: 'create-table',
+        topicLabel: 'Create Table',
+        difficulty: 'dificil',
+        difficultyLabel: 'Difícil',
+        type: 'Restrição via ALTER TABLE',
+        question: 'O professor também ensina adicionar Chaves Estrangeiras depois que as tabelas já foram criadas. Qual comando ALTER TABLE adiciona a FK na tabela COMPRA_ITENS referenciando COMPRA?',
+        options: [
+          { text: 'ALTER TABLE COMPRA_ITENS ADD CONSTRAINT FK_COMPRA FOREIGN KEY (COMPRA_ID) REFERENCES COMPRA(ID);', correct: true },
+          { text: 'ALTER TABLE COMPRA ADD FOREIGN KEY (COMPRA_ID) TO COMPRA_ITENS(ID);', correct: false },
+          { text: 'MODIFY TABLE COMPRA_ITENS SET FK (COMPRA_ID) IN COMPRA(ID);', correct: false },
+          { text: 'UPDATE TABLE COMPRA_ITENS LINK COMPRA_ID -> COMPRA(ID);', correct: false }
+        ],
+        explanation: 'Sintaxe oficial ensinada nas notas de aula do professor: ALTER TABLE tabela_filha ADD CONSTRAINT nome_fk FOREIGN KEY (coluna_fk) REFERENCES tabela_pai(coluna_pk);'
+      }
+    ];
+
+    // ==========================================================================
+    // 2. LOCALSTORAGE
+    // ==========================================================================
+    const STORAGE_KEY = 'antigravity_bd_estudos_progress_v2';
+    let userProgress = { answers: {} };
+
+    function loadProgress() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          userProgress = JSON.parse(saved);
+          if (!userProgress.answers) userProgress.answers = {};
+        }
+      } catch (e) {
+        userProgress = { answers: {} };
+      }
+    }
+
+    function saveProgress() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(userProgress));
+      } catch (e) {}
+    }
+
+    // ==========================================================================
+    // 3. NAVEGAÇÃO
+    // ==========================================================================
+    function initNavigation() {
+      const navButtons = document.querySelectorAll('.nav-item');
+      const sections = document.querySelectorAll('.content-section');
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+
+      function switchTab(targetId) {
+        navButtons.forEach(btn => {
+          if (btn.getAttribute('data-target') === targetId) {
+            btn.classList.add('active');
+          } else {
+            btn.classList.remove('active');
+          }
+        });
+
+        sections.forEach(sec => {
+          if (sec.id === targetId) {
+            sec.classList.add('active');
+          } else {
+            sec.classList.remove('active');
+          }
+        });
+
+        if (sidebar.classList.contains('open')) {
+          sidebar.classList.remove('open');
+          overlay.classList.remove('active');
+        }
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        if (targetId === 'desempenho') {
+          renderPerformanceMetrics();
+        }
+      }
+
+      navButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const target = btn.getAttribute('data-target');
+          switchTab(target);
+        });
+      });
+
+      if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', () => {
+          sidebar.classList.toggle('open');
+          overlay.classList.toggle('active');
+        });
+      }
+
+      if (overlay) {
+        overlay.addEventListener('click', () => {
+          sidebar.classList.remove('open');
+          overlay.classList.remove('active');
+        });
+      }
+    }
+
+    // ==========================================================================
+    // 4. EXERCÍCIOS (FILTRO POR TEMA E DIFICULDADE)
+    // ==========================================================================
+    function renderQuestions() {
+      const container = document.getElementById('questionsContainer');
+      const topicFilter = document.getElementById('topicFilter').value;
+      const difficultyFilter = document.getElementById('difficultyFilter').value;
+      const countLabel = document.getElementById('quizCountLabel');
+
+      if (!container) return;
+      container.innerHTML = '';
+
+      const filteredQuestions = QUIZ_DATA.filter(q => {
+        const matchTopic = (topicFilter === 'todos' || q.topic === topicFilter);
+        const matchDiff = (difficultyFilter === 'todos' || q.difficulty === difficultyFilter);
+        return matchTopic && matchDiff;
+      });
+
+      countLabel.textContent = `Mostrando ${filteredQuestions.length} questões com os filtros atuais`;
+
+      if (filteredQuestions.length === 0) {
+        container.innerHTML = `
+          <div class="card-box" style="text-align: center; padding: 40px 20px;">
+            <p style="font-size: 16px; color: var(--text-muted); margin-bottom: 10px;">Nenhuma questão encontrada para essa combinação de filtros.</p>
+            <small style="color: var(--text-light);">Tente selecionar "Todas as Dificuldades" ou outro tema.</small>
+          </div>
+        `;
+        return;
+      }
+
+      filteredQuestions.forEach((q, index) => {
+        const card = document.createElement('div');
+        card.className = 'question-card';
+        card.id = `q-card-${q.id}`;
+
+        const answeredData = userProgress.answers[q.id];
+        const isAnswered = !!answeredData;
+
+        // Header com Badges de Tema e Dificuldade
+        const header = document.createElement('div');
+        header.className = 'question-header';
+        header.innerHTML = `
+          <div class="q-badges">
+            <span class="q-topic-badge">${q.topicLabel}</span>
+            <span class="q-diff-badge ${q.difficulty}">${q.difficultyLabel}</span>
+          </div>
+          <span class="q-type-badge">${q.type} • Questão ${index + 1} de ${filteredQuestions.length}</span>
+        `;
+        card.appendChild(header);
+
+        // Texto da Pergunta
+        const textEl = document.createElement('h3');
+        textEl.className = 'question-text';
+        textEl.textContent = q.question;
+        card.appendChild(textEl);
+
+        // Opções
+        const optContainer = document.createElement('div');
+        optContainer.className = 'options-container';
+
+        q.options.forEach((opt, optIndex) => {
+          const btn = document.createElement('button');
+          btn.className = 'option-btn';
+          btn.type = 'button';
+
+          const letter = String.fromCharCode(65 + optIndex);
+
+          btn.innerHTML = `
+            <span class="opt-letter">${letter}</span>
+            <span class="opt-text">${opt.text}</span>
+          `;
+
+          if (isAnswered) {
+            btn.disabled = true;
+            if (opt.correct) {
+              btn.classList.add('correct');
+            } else if (answeredData.selectedIndex === optIndex) {
+              btn.classList.add('incorrect');
+            }
+          } else {
+            btn.addEventListener('click', () => handleAnswer(q.id, optIndex, card));
+          }
+
+          optContainer.appendChild(btn);
+        });
+
+        card.appendChild(optContainer);
+
+        // Feedback
+        const feedbackBox = document.createElement('div');
+        feedbackBox.className = 'question-feedback';
+        feedbackBox.id = `feedback-${q.id}`;
+
+        if (isAnswered) {
+          feedbackBox.classList.add('show');
+          if (answeredData.isCorrect) {
+            feedbackBox.classList.add('feedback-correct');
+            feedbackBox.innerHTML = `
+              <div class="feedback-title">✅ Boa! Você acertou!</div>
+              <p>${q.explanation}</p>
+            `;
+          } else {
+            feedbackBox.classList.add('feedback-incorrect');
+            feedbackBox.innerHTML = `
+              <div class="feedback-title">❌ Quase lá! Não era essa.</div>
+              <p>${q.explanation}</p>
+            `;
+          }
+        }
+
+        card.appendChild(feedbackBox);
+        container.appendChild(card);
+      });
+    }
+
+    function handleAnswer(questionId, selectedIndex, cardElement) {
+      const question = QUIZ_DATA.find(q => q.id === questionId);
+      if (!question) return;
+
+      const isCorrect = question.options[selectedIndex].correct;
+
+      userProgress.answers[questionId] = {
+        selectedIndex,
+        isCorrect,
+        answeredAt: new Date().toISOString()
+      };
+      saveProgress();
+
+      const buttons = cardElement.querySelectorAll('.option-btn');
+      buttons.forEach((btn, idx) => {
+        btn.disabled = true;
+        if (question.options[idx].correct) {
+          btn.classList.add('correct');
+        } else if (idx === selectedIndex) {
+          btn.classList.add('incorrect');
+        }
+      });
+
+      const feedbackBox = cardElement.querySelector(`#feedback-${questionId}`);
+      if (feedbackBox) {
+        feedbackBox.classList.remove('feedback-correct', 'feedback-incorrect');
+        if (isCorrect) {
+          feedbackBox.classList.add('feedback-correct');
+          feedbackBox.innerHTML = `
+            <div class="feedback-title">✅ Boa! Você acertou!</div>
+            <p>${question.explanation}</p>
+          `;
+        } else {
+          feedbackBox.classList.add('feedback-incorrect');
+          feedbackBox.innerHTML = `
+            <div class="feedback-title">❌ Quase lá! Não era essa.</div>
+            <p>${question.explanation}</p>
+          `;
+        }
+        feedbackBox.classList.add('show');
+      }
+
+      updateGlobalStatsIndicators();
+    }
+
+    // ==========================================================================
+    // 5. DESEMPENHO
+    // ==========================================================================
+    function calculateStats() {
+      const totalAvailable = QUIZ_DATA.length;
+      const answeredIds = Object.keys(userProgress.answers);
+      const totalAnswered = answeredIds.length;
+
+      let correctCount = 0;
+      answeredIds.forEach(id => {
+        if (userProgress.answers[id] && userProgress.answers[id].isCorrect) {
+          correctCount++;
+        }
+      });
+
+      const incorrectCount = totalAnswered - correctCount;
+      const accuracy = totalAnswered > 0 ? Math.round((correctCount / totalAnswered) * 100) : 0;
+      const completionPercentage = Math.round((totalAnswered / totalAvailable) * 100);
+
+      return {
+        totalAvailable,
+        totalAnswered,
+        correctCount,
+        incorrectCount,
+        accuracy,
+        completionPercentage
+      };
+    }
+
+    function updateGlobalStatsIndicators() {
+      const stats = calculateStats();
+
+      const sbAccuracy = document.getElementById('sidebarAccuracy');
+      const sbFill = document.getElementById('sidebarProgressFill');
+      const sbCount = document.getElementById('sidebarQuestionsCount');
+      const miniStats = document.getElementById('miniStats');
+
+      if (sbAccuracy) sbAccuracy.textContent = `${stats.accuracy}%`;
+      if (sbFill) sbFill.style.width = `${stats.accuracy}%`;
+      if (sbCount) sbCount.textContent = `${stats.totalAnswered} de ${stats.totalAvailable} respondidas`;
+
+      if (miniStats) {
+        miniStats.innerHTML = `<span class="mini-score">${stats.accuracy}% (${stats.totalAnswered}/${stats.totalAvailable})</span>`;
+      }
+    }
+
+    function renderPerformanceMetrics() {
+      const stats = calculateStats();
+
+      const elAnswered = document.getElementById('statTotalAnswered');
+      const elAvailable = document.getElementById('statTotalAvailable');
+      const elCorrect = document.getElementById('statCorrect');
+      const elIncorrect = document.getElementById('statIncorrect');
+      const elAccuracy = document.getElementById('statAccuracy');
+      const elFeedbackMsg = document.getElementById('statFeedbackMsg');
+      const elMainProgress = document.getElementById('mainProgressFill');
+      const elProgressText = document.getElementById('progressPercentageText');
+
+      if (elAnswered) elAnswered.textContent = stats.totalAnswered;
+      if (elAvailable) elAvailable.textContent = stats.totalAvailable;
+      if (elCorrect) elCorrect.textContent = stats.correctCount;
+      if (elIncorrect) elIncorrect.textContent = stats.incorrectCount;
+      if (elAccuracy) elAccuracy.textContent = `${stats.accuracy}%`;
+
+      if (elMainProgress) elMainProgress.style.width = `${stats.completionPercentage}%`;
+      if (elProgressText) elProgressText.textContent = `${stats.completionPercentage}% concluído`;
+
+      if (elFeedbackMsg) {
+        if (stats.totalAnswered === 0) {
+          elFeedbackMsg.textContent = 'Comece a treinar!';
+        } else if (stats.accuracy >= 80) {
+          elFeedbackMsg.textContent = '🔥 Tá mandando muito bem! Quase lá na prova!';
+        } else if (stats.accuracy >= 60) {
+          elFeedbackMsg.textContent = '👍 Bom ritmo! Dá uma olhada nas que você errou.';
+        } else {
+          elFeedbackMsg.textContent = '💡 Vale a pena dar uma lida no resumo antes de continuar.';
+        }
+      }
+
+      const topicList = document.getElementById('topicStatsList');
+      if (topicList) {
+        topicList.innerHTML = '';
+
+        const topics = [
+          { key: 'modelo-relacional', title: 'Modelo Relacional' },
+          { key: 'cardinalidade', title: 'Cardinalidade' },
+          { key: 'normalizacao', title: 'Normalização' },
+          { key: 'create-table', title: 'Create Table' }
+        ];
+
+        topics.forEach(t => {
+          const topicQuestions = QUIZ_DATA.filter(q => q.topic === t.key);
+          let answeredTopic = 0;
+          let correctTopic = 0;
+
+          topicQuestions.forEach(q => {
+            const a = userProgress.answers[q.id];
+            if (a) {
+              answeredTopic++;
+              if (a.isCorrect) correctTopic++;
+            }
+          });
+
+          const topicAcc = answeredTopic > 0 ? Math.round((correctTopic / answeredTopic) * 100) : 0;
+
+          const item = document.createElement('div');
+          item.className = 'topic-stat-item';
+          item.innerHTML = `
+            <div class="topic-stat-header">
+              <span class="topic-stat-name">${t.title}</span>
+              <span class="topic-stat-score">${correctTopic}/${answeredTopic} corretas (${topicAcc}%)</span>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" style="width: ${topicAcc}%;"></div>
+            </div>
+          `;
+          topicList.appendChild(item);
+        });
+      }
+
+      updateGlobalStatsIndicators();
+    }
+
+    // ==========================================================================
+    // 6. INICIALIZAÇÃO
+    // ==========================================================================
+    document.addEventListener('DOMContentLoaded', () => {
+      loadProgress();
+      initNavigation();
+      renderQuestions();
+      updateGlobalStatsIndicators();
+
+      const topicFilter = document.getElementById('topicFilter');
+      const diffFilter = document.getElementById('difficultyFilter');
+
+      if (topicFilter) {
+        topicFilter.addEventListener('change', renderQuestions);
+      }
+      if (diffFilter) {
+        diffFilter.addEventListener('change', renderQuestions);
+      }
+
+      const resetQuizBtn = document.getElementById('resetQuizStateBtn');
+      if (resetQuizBtn) {
+        resetQuizBtn.addEventListener('click', () => {
+          const tFilter = document.getElementById('topicFilter').value;
+          const dFilter = document.getElementById('difficultyFilter').value;
+          const targetQuestions = QUIZ_DATA.filter(q => {
+            const matchTopic = (tFilter === 'todos' || q.topic === tFilter);
+            const matchDiff = (dFilter === 'todos' || q.difficulty === dFilter);
+            return matchTopic && matchDiff;
+          });
+
+          if (confirm(`Quer reiniciar as tentativas das ${targetQuestions.length} questões exibidas?`)) {
+            targetQuestions.forEach(q => {
+              delete userProgress.answers[q.id];
+            });
+            saveProgress();
+            renderQuestions();
+            updateGlobalStatsIndicators();
+          }
+        });
+      }
+
+      const clearBtn = document.getElementById('clearStorageBtn');
+      if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+          if (confirm('Quer apagar todo o seu histórico para fazer o simulado do zero?')) {
+            userProgress = { answers: {} };
+            saveProgress();
+            renderQuestions();
+            renderPerformanceMetrics();
+            alert('Pronto! Tudo zerado para você começar de novo.');
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

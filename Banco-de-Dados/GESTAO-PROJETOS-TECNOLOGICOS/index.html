@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>Gestão de Projetos Tecnológicos • Prof. Cassiano Borim</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --font-main: 'Poppins', sans-serif;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      
+      --text-dark: #0f172a;
+      --text-muted: #64748b;
+      
+      --primary: #4f46e5;
+      --primary-soft: #eef2ff;
+      --primary-border: #c7d2fe;
+      
+      --success: #10b981;
+      --success-soft: #ecfdf5;
+      --success-text: #065f46;
+
+      --danger: #ef4444;
+      --danger-soft: #fef2f2;
+      --danger-text: #991b1b;
+
+      --warning-soft: #fffbeb;
+      --warning-border: #fde68a;
+      --warning-text: #92400e;
+
+      --radius: 12px;
+      --transition: 0.2s ease;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--bg);
+      color: var(--text-dark);
+      line-height: 1.6;
+      font-size: 15px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Barra Superior com Navegação em Pílulas */
+    .header-nav {
+      position: sticky;
+      top: 0;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      z-index: 100;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-icon {
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      color: white;
+      font-weight: 700;
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+    }
+
+    .brand-name {
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .brand-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .nav-scroll-wrapper {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+      scrollbar-width: none;
+    }
+
+    .nav-scroll-wrapper::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav-btn {
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      background: none;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: var(--transition);
+    }
+
+    .nav-btn:hover {
+      background: #f1f5f9;
+      color: var(--text-dark);
+    }
+
+    .nav-btn.active {
+      background: var(--primary-soft);
+      color: var(--primary);
+      border-color: var(--primary-border);
+    }
+
+    /* Container Principal */
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 24px 20px 80px;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+      animation: fadeIn 0.25s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Cabeçalho do Módulo */
+    .module-banner {
+      background: linear-gradient(135deg, #4f46e5, #4338ca);
+      color: white;
+      padding: 22px 24px;
+      border-radius: var(--radius);
+      margin-bottom: 22px;
+    }
+
+    .module-banner span {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 3px 8px;
+      border-radius: 4px;
+      margin-bottom: 6px;
+    }
+
+    .module-banner h2 {
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+
+    .module-banner p {
+      font-size: 13.5px;
+      opacity: 0.9;
+    }
+
+    /* Blocos de Conteúdo */
+    .content-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 24px;
+      margin-bottom: 20px;
+    }
+
+    .content-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .content-body p {
+      color: #334155;
+      font-size: 14.5px;
+      line-height: 1.7;
+      margin-bottom: 12px;
+    }
+
+    .content-body ul, .content-body ol {
+      padding-left: 20px;
+      margin-bottom: 12px;
+      color: #334155;
+    }
+
+    .content-body li {
+      margin-bottom: 6px;
+      font-size: 14.5px;
+    }
+
+    /* Caixas de Destaque */
+    .cassiano-box {
+      background-color: #fffbeb;
+      border: 1px solid #fde68a;
+      border-left: 4px solid #d97706;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin: 14px 0;
+      font-size: 13.5px;
+      color: #78350f;
+    }
+
+    .cassiano-box strong {
+      display: block;
+      color: #92400e;
+      margin-bottom: 2px;
+    }
+
+    .alert-box {
+      background-color: #fef2f2;
+      border: 1px solid #fecaca;
+      border-left: 4px solid #ef4444;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin: 14px 0;
+      font-size: 13.5px;
+      color: #991b1b;
+    }
+
+    .alert-box strong {
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    /* Tabelas compactas */
+    .table-wrap {
+      overflow-x: auto;
+      margin: 14px 0;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+      text-align: left;
+    }
+
+    th {
+      background: #f8fafc;
+      padding: 10px 12px;
+      font-weight: 600;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-dark);
+    }
+
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      color: #334155;
+      vertical-align: top;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .tag-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-right: 4px;
+    }
+
+    .tag-red { background: #fee2e2; color: #991b1b; }
+    .tag-yellow { background: #fef3c7; color: #92400e; }
+    .tag-blue { background: #e0e7ff; color: #3730a3; }
+    .tag-green { background: #ecfdf5; color: #065f46; }
+
+    /* Quiz / Exercícios */
+    .quiz-filter {
+      display: flex;
+      gap: 10px;
+      background: var(--surface);
+      padding: 14px 18px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .filter-select {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      font-family: inherit;
+      font-size: 13.5px;
+      outline: none;
+    }
+
+    .question-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 18px;
+      transition: var(--transition);
+    }
+
+    .question-block.correct-border { border-color: var(--success); }
+    .question-block.wrong-border { border-color: var(--danger); }
+
+    .q-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .q-text {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--text-dark);
+    }
+
+    .opts-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .opt-btn {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      width: 100%;
+      text-align: left;
+      padding: 11px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+      font-family: inherit;
+      font-size: 14px;
+      color: #334155;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .opt-btn:hover:not(:disabled) {
+      background: #f8fafc;
+      border-color: var(--primary);
+    }
+
+    .opt-btn.correct {
+      background: var(--success-soft);
+      border-color: var(--success);
+      color: var(--success-text);
+      font-weight: 600;
+    }
+
+    .opt-btn.wrong {
+      background: var(--danger-soft);
+      border-color: var(--danger);
+      color: var(--danger-text);
+      font-weight: 600;
+    }
+
+    .opt-btn.reveal-correct {
+      background: var(--success-soft);
+      border-color: #a7f3d0;
+      color: var(--success-text);
+    }
+
+    .opt-btn:disabled {
+      cursor: default;
+    }
+
+    .q-feedback {
+      display: none;
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      line-height: 1.5;
+    }
+
+    .q-feedback.show { display: block; }
+    .q-feedback.correct {
+      background: var(--success-soft);
+      border: 1px solid #a7f3d0;
+      color: var(--success-text);
+    }
+    .q-feedback.wrong {
+      background: var(--danger-soft);
+      border: 1px solid #fecaca;
+      color: var(--danger-text);
+    }
+
+    /* Desempenho */
+    .perf-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .p-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      text-align: center;
+    }
+
+    .p-card-val {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .p-card-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .btn-clear {
+      background: var(--danger-soft);
+      color: var(--danger-text);
+      border: 1px solid #fecaca;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 13px;
+      margin-top: 14px;
+    }
+
+    @media (max-width: 768px) {
+      .header-nav {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 10px 14px;
+      }
+      .brand-group {
+        justify-content: center;
+      }
+      .container {
+        padding: 16px 12px 60px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Menu de Navegação Horizontal -->
+  <header class="header-nav">
+    <div class="brand-group">
+      <div class="brand-icon">GP</div>
+      <div>
+        <div class="brand-name">Gestão de Projetos Tecnológicos</div>
+        <div class="brand-sub">Prof. Cassiano Borim • Foco de Prova</div>
+      </div>
+    </div>
+
+    <nav class="nav-scroll-wrapper">
+      <button class="nav-btn active" data-tab="tab-m1">📌 1. Fundamentos & TAP</button>
+      <button class="nav-btn" data-tab="tab-m2">💎 2. Duplo Diamante & CSD</button>
+      <button class="nav-btn" data-tab="tab-m3">🎯 3. Escopo & Histórias</button>
+      <button class="nav-btn" data-tab="tab-m4">🏃 4. Scrum & Ágil</button>
+      <button class="nav-btn" data-tab="tab-quiz">✏️ Treinar Questões (22)</button>
+      <button class="nav-btn" data-tab="tab-desempenho">📊 Meu Desempenho</button>
+    </nav>
+  </header>
+
+  <main class="container">
+
+    <!-- ====================================================================
+         MÓDULO 1: FUNDAMENTOS, TAP & STAKEHOLDERS
+         ==================================================================== -->
+    <div id="tab-m1" class="tab-panel active">
+      <div class="module-banner">
+        <span>Módulo 1 • Aulas 02 e 06</span>
+        <h2>Fundamentos, TAP e Stakeholders</h2>
+        <p>O que é projeto de verdade, por que ele termina, a certidão de nascimento e quem são as partes interessadas.</p>
+      </div>
+
+      <!-- Projeto vs Operação -->
+      <div class="content-box">
+        <h3 class="content-title">1. O que é Projeto vs. Operação (Rotina)</h3>
+        <div class="content-body">
+          <p>O Cassiano foi direto ao ponto na definição:</p>
+          <ul>
+            <li><strong>Projeto:</strong> É uma iniciativa <strong>temporária</strong> (tem data de início e término cravadas) feita para produzir um <strong>produto, serviço ou resultado exclusivo</strong> (ex: desenvolver um novo app de entregas).</li>
+            <li><strong>Operação (Rotina):</strong> Trabalho <strong>contínuo e repetitivo</strong> que mantém o negócio rodando dia após dia (ex: o suporte atendendo chamados ou a fábrica montando o mesmo carro).</li>
+          </ul>
+
+          <p><strong>Siglas de Mercado que o professor citou:</strong></p>
+          <ul>
+            <li><strong>PMI:</strong> <em>Project Management Institute</em> (maior instituto mundial, fundado em 1969).</li>
+            <li><strong>PMBOK:</strong> O guia mundial de boas práticas publicado pelo PMI.</li>
+            <li><strong>PMO:</strong> Escritório de Gerenciamento de Projetos dentro da empresa.</li>
+            <li><strong>PMP / CAPM:</strong> Certificações profissionais para gerentes de projetos.</li>
+          </ul>
+
+          <div class="alert-box">
+            <strong>⚠️ As 4 Causas em que um Projeto Termina (Cai na Prova):</strong>
+            1) <strong>Objetivos atingidos:</strong> Conseguiu entregar TODOS os objetivos prometidos.<br>
+            2) <strong>Inviabilidade comprovada:</strong> Ficou claro que os objetivos <em>não</em> serão alcançados (custo estourou ou a tecnologia falhou).<br>
+            3) <strong>Cancelamento pelo cliente ou Sponsor:</strong> Quem paga mandou parar (mudança de estratégia ou corte de dinheiro).<br>
+            4) <strong>A necessidade deixa de existir:</strong> A lei mudou ou a tecnologia ficou velha antes de terminar.
+          </div>
+        </div>
+      </div>
+
+      <!-- O Papel do GP -->
+      <div class="content-box">
+        <h3 class="content-title">2. O Papel do Gerente de Projetos (GP)</h3>
+        <div class="content-body">
+          <ul>
+            <li><strong>O Elo:</strong> O GP é a ponte viva entre a <strong>estratégia da diretoria</strong> e o <strong>time técnico</strong>.</li>
+            <li><strong>90% do tempo:</strong> É gasto com <strong>COMUNICAÇÃO</strong> (reuniões, conversas, alinhamentos, WhatsApp).</li>
+            <li><strong>Habilidade Âncora:</strong> <strong>ESTABELECIMENTO DE CONFIANÇA</strong>. Sem confiança da equipe e do cliente, nenhuma outra habilidade (liderança, negociação) funciona.</li>
+          </ul>
+
+          <div class="cassiano-box">
+            <strong>Distinção de Sala (PO vs Scrum Master):</strong>
+            • O <strong>PO (Product Owner)</strong> cuida do negócio e do cliente. <em>Ele NÃO precisa saber programar nem entender a diferença entre PostgreSQL e SQL Server!</em><br>
+            • O <strong>Scrum Master</strong> é o facilitador que <em>remove todos os impedimentos</em> para o time trabalhar em paz.
+          </div>
+        </div>
+      </div>
+
+      <!-- TAP -->
+      <div class="content-box">
+        <h3 class="content-title">3. O Termo de Abertura do Projeto (TAP)</h3>
+        <div class="content-body">
+          <p>É a <strong>"certidão de nascimento"</strong> oficial do projeto. Autoriza o início do trabalho e dá poderes ao GP.</p>
+          <div class="alert-box">
+            <strong>Regra Básica de Mercado:</strong> Nunca monte equipe nem gaste um centavo antes do TAP estar aprovado e assinado pelas partes interessadas!
+          </div>
+
+          <p><strong>Os 5 Blocos Essenciais do TAP:</strong></p>
+          <ol>
+            <li><strong>Objetivos e Justificativa de Negócio:</strong> Qual dor da empresa vai resolver?</li>
+            <li><strong>Requisitos de Alto Nível:</strong> As necessidades gerais do produto.</li>
+            <li><strong>Entregas Principais (*Deliverables*):</strong> O que vai ser entregue na prática (o app, o manual).</li>
+            <li><strong>O que NÃO inclui (Limites de Escopo):</strong> Deixar claro o que o projeto <strong>não</strong> vai fazer. Isso evita que o cliente exija coisas de graça na entrega e tente processar a empresa.</li>
+            <li><strong>Critérios de Aceitação:</strong> O que precisa acontecer para o cliente assinar o aceite e pagar.</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Stakeholders -->
+      <div class="content-box">
+        <h3 class="content-title">4. Partes Interessadas (Stakeholders) & Matriz</h3>
+        <div class="content-body">
+          <p>Stakeholder é <strong>qualquer pessoa, grupo ou entidade que pode impactar ou ser impactada pelo projeto</strong> (usuários, diretoria, setor de compras, PROCON).</p>
+          
+          <div class="alert-box">
+            <strong>⚠️ Pegadinha Certa de Prova:</strong> Concorrente de mercado <strong>NÃO</strong> é parte interessada do seu projeto!
+          </div>
+
+          <p><strong>Os 3 Tipos de Stakeholders de Sala:</strong></p>
+          <ul>
+            <li><strong>Primário:</strong> Diretamente afetado/beneficiário (ex: o usuário final do sistema).</li>
+            <li><strong>Secundário:</strong> Indiretamente afetado ou que apoia o projeto (compras, financeiro, RH, jurídico).</li>
+            <li><strong>Chave (*Key Stakeholder*):</strong> Tem forte poder e influência. Exemplo máximo: o <strong>Sponsor (Patrocinador)</strong>, que é quem põe a grana e manda no projeto.</li>
+          </ul>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Perfil do Stakeholder</th>
+                  <th>Ação Recomendada do GP</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Alto Poder & Alto Interesse</strong></td>
+                  <td><strong>Gerenciar de Perto</strong> (o Sponsor / Dono da empresa: envolver em tudo!).</td>
+                </tr>
+                <tr>
+                  <td><strong>Alto Poder & Baixo Interesse</strong></td>
+                  <td><strong>Manter Satisfeito</strong> (Diretor Financeiro: relatórios executivos pontuais, sem cansar com rotina).</td>
+                </tr>
+                <tr>
+                  <td><strong>Baixo Poder & Alto Interesse</strong></td>
+                  <td><strong>Manter Informado</strong> (Usuários finais e equipe de suporte: mandar novidades).</td>
+                </tr>
+                <tr>
+                  <td><strong>Baixo Poder & Baixo Interesse</strong></td>
+                  <td><strong>Monitorar</strong> (apenas acompanhar sem gastar esforço).</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="cassiano-box">
+            <strong>🔒 Por que o mapa de Stakeholders é CONFIDENCIAL?</strong>
+            Porque contém diagnósticos sensíveis sobre quem é <em>Resistente</em>, <em>Neutro</em> ou <em>Apoiador</em>, além de jogos de influência política. Se isso vazar na empresa, gera um conflito interno desastroso.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================================================================
+         MÓDULO 2: DUPLO DIAMANTE & MATRIZ CSD
+         ==================================================================== -->
+    <div id="tab-m2" class="tab-panel">
+      <div class="module-banner">
+        <span>Módulo 2 • Aulas 03, 04 e 05</span>
+        <h2>Duplo Diamante & Matriz CSD</h2>
+        <p>Design Thinking, tipos de pesquisa de mercado e como eliminar o achismo da equipe técnica.</p>
+      </div>
+
+      <!-- Duplo Diamante -->
+      <div class="content-box">
+        <h3 class="content-title">1. O Modelo do Duplo Diamante</h3>
+        <div class="content-body">
+          <p>O Duplo Diamante divide o desenvolvimento em 4 fases, alternando entre <strong>divergir</strong> (abrir a mente para ideias) e <strong>convergir</strong> (afunilar e tomar decisões):</p>
+          
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Fase</th>
+                  <th>Tipo de Movimento</th>
+                  <th>O que é feito na prática</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>1. Descobrir</strong> (Discover)</td>
+                  <td><span class="tag-badge tag-blue">Divergir</span></td>
+                  <td>Pesquisar a fundo, ouvir usuários, entender as dores reais sem julgar.</td>
+                </tr>
+                <tr>
+                  <td><strong>2. Definir</strong> (Define)</td>
+                  <td><span class="tag-badge tag-red">Convergir</span></td>
+                  <td>Filtrar tudo o que descobriu e escolher <strong>qual problema vale a pena resolver</strong> (1º diamante = Problema certo!).</td>
+                </tr>
+                <tr>
+                  <td><strong>3. Desenvolver</strong> (Develop)</td>
+                  <td><span class="tag-badge tag-blue">Divergir</span></td>
+                  <td>Brainstorming, desenhar protótipos de baixa e alta fidelidade e testar soluções.</td>
+                </tr>
+                <tr>
+                  <td><strong>4. Entregar</strong> (Deliver)</td>
+                  <td><span class="tag-badge tag-red">Convergir</span></td>
+                  <td>Testar protótipos com usuários finais, descartar o que não deu certo e lançar o produto (2º diamante = Solução certa!).</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pesquisa de Mercado -->
+      <div class="content-box">
+        <h3 class="content-title">2. Pesquisa de Mercado: Primária vs. Secundária</h3>
+        <div class="content-body">
+          <ul>
+            <li><strong>Pesquisa Primária:</strong> Coletada <strong>diretamente na fonte com os usuários</strong> (entrevistas cara a cara, questionários online, observação direta). <em>Exige o TCLE (Termo de Consentimento Livre e Esclarecido) para proteger os dados do entrevistado.</em></li>
+            <li><strong>Pesquisa Secundária (*Desk Research*):</strong> Coletada de <strong>fontes que já existem</strong> na internet ou em livros (dados do IBGE, artigos de mercado, benchmark de concorrentes).</li>
+            <li><strong>Qualitativa vs. Quantitativa:</strong>
+              <br>• <em>Qualitativa:</em> Busca entender sentimentos, motivos e dores (*"Por que você achou difícil usar esse botão?"*).
+              <br>• <em>Quantitativa:</em> Traz métricas e proporções (*"85% dos usuários demoram mais de 3 minutos no cadastro"*).
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Matriz CSD -->
+      <div class="content-box">
+        <h3 class="content-title">3. A Matriz CSD (Certezas, Suposições e Dúvidas)</h3>
+        <div class="content-body">
+          <p>Ferramenta visual em 3 colunas para alinhar a equipe no início do projeto e eliminar o "achismo":</p>
+          
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th style="color: var(--success-text); background: var(--success-soft);">🟢 Certezas</th>
+                  <th style="color: var(--warning-text); background: var(--warning-soft);">🟡 Suposições</th>
+                  <th style="color: var(--danger-text); background: var(--danger-soft);">🔴 Dúvidas</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>O que a equipe <strong>já tem certeza comprovada</strong> (por dados ou contrato).</td>
+                  <td>O que a equipe <strong>acha que é verdade</strong>, mas ainda não tem prova (hipóteses).</td>
+                  <td>O que a equipe <strong>não sabe</strong> e precisa descobrir com urgência.</td>
+                </tr>
+                <tr>
+                  <td><em>Ex: O sistema deve rodar em celulares Android e iOS.</em></td>
+                  <td><em>Ex: Achamos que o cliente prefere login com Google em vez de criar senha.</em></td>
+                  <td><em>Ex: Qual é o orçamento limite liberado pela diretoria para a nuvem?</em></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="cassiano-box">
+            <strong>Dinâmica da Matriz CSD na Prática:</strong>
+            A matriz é <strong>viva</strong>! As Dúvidas e Suposições guiam as pesquisas com usuários. Conforme são testadas e validadas, elas passam para a coluna de <strong>Certezas</strong> (ou são descartadas).
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================================================================
+         MÓDULO 3: ESCOPO, HISTÓRIAS & BUGS
+         ==================================================================== -->
+    <div id="tab-m3" class="tab-panel">
+      <div class="module-banner">
+        <span>Módulo 3 • Aulas 06, 07 e 08</span>
+        <h2>Escopo, Histórias de Usuário & Bugs</h2>
+        <p>A pergunta de prova do Jira, a lição de Peter Drucker, INVEST, 3C's e onde fica o bug.</p>
+      </div>
+
+      <!-- Escopo e Peter Drucker -->
+      <div class="content-box">
+        <h3 class="content-title">1. Escopo, Visão do Produto & Peter Drucker</h3>
+        <div class="content-body">
+          <div class="cassiano-box">
+            <strong>Definição Enfática de Escopo:</strong>
+            "Escopo nada mais é do que uma <strong>LISTA DE REQUISITOS</strong>. Se alguém falar outra coisa tá errado, tá Jão? Do escopo/requisitos saem as funcionalidades e o backlog."
+          </div>
+
+          <p><strong>Visão do Produto (Thundercats):</strong> Descreve o <strong>estado futuro</strong> que o time quer alcançar (<em>"Visão além do alcance!"</em>). Se dois desenvolvedores tiverem visões divergentes (ex: um acha que o app apoia o advogado e o outro acha que substitui), o projeto vira um caos.</p>
+
+          <p><strong>A Frase de Peter Drucker (Cai na Prova!):</strong></p>
+          <div class="alert-box">
+            <em>"Não há nada tão inútil quanto fazer de forma eficiente o que não deveria ser feito."</em>
+          </div>
+          <ul>
+            <li><strong>80% das funções de software nunca são usadas:</strong> Fazer um código lindo para algo inútil é desperdício de dinheiro.</li>
+            <li><strong>O Perigo do Retrabalho:</strong> Retrabalho rouba as horas que deveriam ser gastas no <em>próximo contrato da empresa</em>, atrasando a esteira inteira e quebrando o faturamento.</li>
+          </ul>
+
+          <div class="cassiano-box" style="border-left-color: #ef4444;">
+            <strong>🚨 PERGUNTA OFICIAL DE PROVA DO JIRA (Palavras do Cassiano):</strong>
+            O professor vai mostrar uma foto do Jira com 600 tarefas marcadas como "Alta Prioridade" e perguntar se a empresa é ágil.<br>
+            <strong>Como responder para tirar NOTA 100:</strong><br>
+            1) <em>"NÃO É ÁGIL: Se tudo é prioridade, **nada é prioridade**."</em><br>
+            2) <em>"NÃO É ÁGIL: Ter 600 tarefas paradas no Jira é apenas um backlog inchado sem refinamento, sem estimativa e sem entrega contínua."</em><br>
+            3) <em>"NÃO É ÁGIL: Ter ferramenta moderna (Jira) não torna ninguém ágil; agilidade está nas pessoas e nos processos."</em>
+          </div>
+        </div>
+      </div>
+
+      <!-- Histórias de Usuário -->
+      <div class="content-box">
+        <h3 class="content-title">2. Histórias de Usuário (User Stories)</h3>
+        <div class="content-body">
+          <p>A história de usuário descreve uma necessidade e deve focar em <strong>entregar valor ao usuário</strong>.</p>
+          
+          <div class="cassiano-box">
+            <strong>Modelo Padrão dos 3W's:</strong><br>
+            <strong>Como</strong> [tipo de usuário / persona],<br>
+            <strong>Eu quero</strong> [funcionalidade / ação desejada],<br>
+            <strong>Para</strong> [benefício / valor de negócio gerado].<br><br>
+            <em>Exemplo: "Como cliente, quero salvar produtos na lista de desejos, para encontrá-los e comprá-los mais tarde."</em>
+          </div>
+
+          <p><strong>A Técnica dos 3C's (Ron Jeffries):</strong></p>
+          <ul>
+            <li><strong>1. Cartão (*Card*):</strong> A frase curta anotada no post-it ou cartão virtual.</li>
+            <li><strong>2. Conversa (*Conversation*):</strong> A reunião onde o PO, o time e o cliente conversam e tiram dúvidas.</li>
+            <li><strong>3. Confirmação (*Confirmation*):</strong> Os <strong>Critérios de Aceite</strong> claros, objetivos e testáveis que comprovam que a história está pronta.</li>
+          </ul>
+
+          <p><strong>O Filtro INVEST (Como saber se a história é boa):</strong></p>
+          <ul>
+            <li><strong>I - Independent:</strong> Não depende de outra história para poder ser feita.</li>
+            <li><strong>N - Negotiable:</strong> Negociável entre o time e o PO (não é contrato rígido).</li>
+            <li><strong>V - Valuable:</strong> Gera valor perceptível ao cliente/usuário.</li>
+            <li><strong>E - Estimable:</strong> O time consegue estimar o esforço e tempo.</li>
+            <li><strong>S - Small:</strong> Pequena o suficiente para caber dentro da Sprint.</li>
+            <li><strong>T - Testable:</strong> Possui critérios de aceite que permitem ser testada.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Escala de tempo e Bug -->
+      <div class="content-box">
+        <h3 class="content-title">3. Escala de Tempo & Onde Fica o Bug</h3>
+        <div class="content-body">
+          <p><strong>A Escala de Tempo ensinada em aula:</strong></p>
+          <ul>
+            <li>Projeto = <strong>Meses</strong></li>
+            <li>Épico = <strong>Semanas</strong></li>
+            <li>História de Usuário = <strong>Dias</strong></li>
+            <li>Tarefa (*Task*) = <strong>Horas</strong> (atividade técnica do programador: fazer botão de negrito, criar rota).</li>
+          </ul>
+
+          <div class="alert-box">
+            <strong>🐛 ONDE O BUG DEVE SER ASSOCIADO? (Pegadinha Certa de Prova):</strong>
+            O bug deve estar associado diretamente à <strong>TAREFA</strong> técnica que gerou o defeito, e <strong>NUNCA</strong> solto na história inteira!<br><br>
+            <strong>Por que?</strong> Por causa da <strong>RASTREABILIDADE</strong>: permite saber qual tarefa técnica causou a falha, quem desenvolveu e medir quanto tempo de retrabalho foi gasto.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================================================================
+         MÓDULO 4: SCRUM, CERIMÔNIAS & MANIFESTO ÁGIL
+         ==================================================================== -->
+    <div id="tab-m4" class="tab-panel">
+      <div class="module-banner">
+        <span>Módulo 4 • Aula 08</span>
+        <h2>Scrum, Cerimônias & Manifesto Ágil</h2>
+        <p>Por que Kanban não é metodologia ágil, a analogia da bicicleta e as 4 reuniões do Scrum.</p>
+      </div>
+
+      <!-- Scrum vs Kanban -->
+      <div class="content-box">
+        <h3 class="content-title">1. Scrum vs. Kanban & A Analogia da Bicicleta</h3>
+        <div class="content-body">
+          <div class="alert-box">
+            <strong>⚠️ Frase Enfática do Cassiano em Aula:</strong>
+            <strong>Kanban NÃO é metodologia ágil!</strong> É uma ferramenta/método visual de gestão de fluxo de trabalho (*A Fazer ➔ Fazendo ➔ Feito*). O **Scrum** é que é o framework ágil completo.
+          </div>
+
+          <div class="cassiano-box">
+            <strong>A Analogia da Bicicleta do Cassiano:</strong>
+            "Se você aprendeu a andar de bicicleta, você anda numa de fibra de carbono ou numa Barra Forte velha. Na gestão de TI é igual: agilidade é processo, comunicação e entrega de valor. A ferramenta (Jira, Notion, Trello) é secundária!"
+          </div>
+        </div>
+      </div>
+
+      <!-- As 4 Cerimônias -->
+      <div class="content-box">
+        <h3 class="content-title">2. As 4 Cerimônias do Scrum</h3>
+        <div class="content-body">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Cerimônia</th>
+                  <th>Quando acontece</th>
+                  <th>Regras e Objetivos de Sala</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>1. Sprint Planning</strong></td>
+                  <td>No 1º dia da Sprint.</td>
+                  <td>O PO apresenta os itens do topo do Product Backlog e o time define o que cabe, gerando o <strong>Sprint Backlog</strong>.</td>
+                </tr>
+                <tr>
+                  <td><strong>2. Daily Scrum</strong></td>
+                  <td>Todo dia da Sprint.</td>
+                  <td>Reunião rápida de <strong>máximo 15 minutos e feita EM PÉ</strong> (para ninguém enrolar). Responde 3 coisas: 1) O que fiz ontem? 2) O que farei hoje? 3) Algum impedimento?</td>
+                </tr>
+                <tr>
+                  <td><strong>3. Sprint Review</strong></td>
+                  <td>No final da Sprint com clientes.</td>
+                  <td>Demonstração do <strong>software funcionando (incremento)</strong> para colher feedbacks. Não é apresentação de slide!</td>
+                </tr>
+                <tr>
+                  <td><strong>4. Sprint Retrospective</strong></td>
+                  <td>Após a Review, antes da próxima Sprint.</td>
+                  <td>É o <strong>momento mais interno do time</strong> (sem clientes). Avalia pessoas e processos: <em>O que deu certo? O que deu errado? O que melhorar?</em></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="alert-box">
+            <strong>Regra das Sprints:</strong> Uma Sprint não deve conter trabalho de Sprints anteriores. Se a Sprint 1 e 2 já fecharam e a equipe está na 3, não faz sentido colocar tarefa na Sprint 1!
+          </div>
+        </div>
+      </div>
+
+      <!-- Manifesto Ágil -->
+      <div class="content-box">
+        <h3 class="content-title">3. Os 4 Valores do Manifesto Ágil (2001)</h3>
+        <div class="content-body">
+          <ol>
+            <li><strong>Indivíduos e interações</strong> MAIS QUE <em>processos e ferramentas</em>.</li>
+            <li><strong>Software funcionando</strong> MAIS QUE <em>documentação abrangente</em>.</li>
+            <li><strong>Colaboração com o cliente</strong> MAIS QUE <em>negociação de contratos</em>.</li>
+            <li><strong>Responder a mudanças</strong> MAIS QUE <em>seguir um plano</em>.</li>
+          </ol>
+
+          <p style="margin-top: 12px; font-size: 14px; color: var(--text-muted);">
+            ⚠️ <em>Cuidado na prova:</em> Isso <strong>não</strong> significa abandonar processos ou documentação. Significa apenas que, quando houver conflito, entregar o software funcionando para o cliente tem <strong>maior valor</strong>!
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================================================================
+         SIMULADO: 22 QUESTÕES PRÁTICAS
+         ==================================================================== -->
+    <div id="tab-quiz" class="tab-panel">
+      <div class="quiz-filter">
+        <span style="font-size: 13.5px; font-weight: 600; color: var(--text-muted);">Filtrar Questões:</span>
+        <select id="diffFilter" class="filter-select">
+          <option value="todos">Todas as 22 Questões</option>
+          <option value="facil">Fáceis (Conceito Direto)</option>
+          <option value="medio">Médias (Cenários Práticos)</option>
+          <option value="dificil">Difíceis (Pegadinhas do Cassiano)</option>
+        </select>
+        <button id="btnResetCurrent" style="margin-left: auto; padding: 6px 12px; font-size: 12px; border: 1px solid var(--border); border-radius: 6px; background: white; cursor: pointer;">Reiniciar este filtro</button>
+      </div>
+
+      <div id="quizContainer">
+        <!-- Renderizado via JS -->
+      </div>
+    </div>
+
+    <!-- ====================================================================
+         DESEMPENHO
+         ==================================================================== -->
+    <div id="tab-desempenho" class="tab-panel">
+      <div class="perf-cards">
+        <div class="p-card">
+          <div class="p-card-val" id="statAccuracy">0%</div>
+          <div class="p-card-label">Taxa Geral de Acertos</div>
+        </div>
+        <div class="p-card">
+          <div class="p-card-val" id="statAnswered" style="color: var(--text-dark);">0/22</div>
+          <div class="p-card-label">Respondidas</div>
+        </div>
+        <div class="p-card">
+          <div class="p-card-val" id="statCorrect" style="color: var(--success);">0</div>
+          <div class="p-card-label">Corretas</div>
+        </div>
+        <div class="p-card">
+          <div class="p-card-val" id="statWrong" style="color: var(--danger);">0</div>
+          <div class="p-card-label">Erros</div>
+        </div>
+      </div>
+
+      <div style="background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 20px;">
+        <h3 style="font-size: 16px; margin-bottom: 8px;">Dica do Professor Cassiano</h3>
+        <p id="statFeedbackMsg" style="font-size: 14px; color: var(--text-muted); margin-bottom: 16px;">Você ainda não começou o simulado.</p>
+        <button class="btn-clear" id="btnClearStorage">Zerar Histórico e Refazer Tudo</button>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    // ==========================================================================
+    // 22 QUESTÕES OFICIAIS DO CASSIANO
+    // ==========================================================================
+    const QUIZ_DATA = [
+      {
+        id: 'q1',
+        difficulty: 'facil',
+        prompt: 'Qual é a principal diferença conceitual entre um "Projeto" e uma "Operação (Rotina)"?',
+        options: [
+          'Projeto não possui orçamento previsto; a operação é auditada.',
+          'Projeto é temporário com objetivo de criar um resultado exclusivo; a operação é contínua e repetitiva.',
+          'A operação tem prazo certo para terminar; o projeto nunca acaba.',
+          'Projeto visa apenas corrigir bugs; a operação cria novas tecnologias.'
+        ],
+        correct: 1,
+        explanation: 'Projeto tem início, meio e fim e gera algo exclusivo. Operação é o trabalho contínuo e rotineiro (ex: suporte atendendo chamados).'
+      },
+      {
+        id: 'q2',
+        difficulty: 'medio',
+        prompt: 'Se uma lei mudar e tornar o produto inútil antes do fim, qual é o motivo formal do encerramento do projeto?',
+        options: [
+          'Alcance pleno de todos os objetivos.',
+          'A necessidade do projeto deixou de existir.',
+          'Falta de competência técnica da equipe de programadores.',
+          'Estouro de cronograma na Daily.'
+        ],
+        correct: 1,
+        explanation: 'Das 4 causas de encerramento ensinadas pelo Cassiano: quando a necessidade do projeto deixa de existir (mudança legal, obsolescência).'
+      },
+      {
+        id: 'q3',
+        difficulty: 'dificil',
+        prompt: 'No Termo de Abertura (TAP), por que é fundamental documentar "O que o projeto NÃO inclui" (Limites de Escopo)?',
+        options: [
+          'Para demitir funcionários sem justa causa.',
+          'Para evitar que o cliente exija funcionalidades extras de graça na entrega e proteger a empresa.',
+          'Porque o PMBOK proíbe sistemas com mais de duas telas.',
+          'Para aumentar os juros contratuais do projeto.'
+        ],
+        correct: 1,
+        explanation: 'Deixar registrado o que NÃO vai ser feito é o escudo do GP contra clientes que tentam empurrar adicionais de graça sem reajuste.'
+      },
+      {
+        id: 'q4',
+        difficulty: 'medio',
+        prompt: 'Qual competência o Prof. Cassiano classificou como a "habilidade âncora" do Gerente de Projetos?',
+        options: [
+          'Programar em Java e configurar bancos SQL.',
+          'Estabelecimento de Confiança (sem ela nenhuma outra habilidade funciona).',
+          'Técnicas de Coaching empresarial.',
+          'Preencher gráficos de Gantt secretamente.'
+        ],
+        correct: 1,
+        explanation: 'O GP passa 90% do tempo se comunicando, e a habilidade que serve de âncora para todas as outras é o Estabelecimento de Confiança.'
+      },
+      {
+        id: 'q5',
+        difficulty: 'facil',
+        prompt: 'Quais são as 4 etapas sequenciais do modelo Duplo Diamante?',
+        options: [
+          'Descobrir, Definir, Desenvolver e Entregar.',
+          'Planejar, Executar, Monitorar e Controlar.',
+          'Codificar, Testar, Homologar e Publicar.',
+          'A Fazer, Fazendo, Em Teste e Feito.'
+        ],
+        correct: 0,
+        explanation: 'Descobrir (diverge problema), Definir (converge problema), Desenvolver (diverge solução), Entregar (converge solução).'
+      },
+      {
+        id: 'q6',
+        difficulty: 'medio',
+        prompt: 'Entrevistas cara a cara e formulários aplicados diretamente com usuários reais são:',
+        options: [
+          'Pesquisa Secundária (Desk Research).',
+          'Pesquisa Primária (coletada direto na fonte com os envolvidos, exigindo TCLE).',
+          'Pesquisa Hipotética sem validade.',
+          'Pesquisa de Escopo Fechado.'
+        ],
+        correct: 1,
+        explanation: 'Pesquisa Primária é coletada diretamente com os usuários. Pesquisa Secundária é o que já existe em relatórios e internet.'
+      },
+      {
+        id: 'q7',
+        difficulty: 'dificil',
+        prompt: 'Na Matriz CSD, qual o comportamento correto da equipe em relação às "Suposições" e "Dúvidas"?',
+        options: [
+          'Apagar tudo para trabalhar só com as Certezas contratuais.',
+          'Investigar e validar através de pesquisas até se transformarem em Certezas (ou serem descartadas).',
+          'Virar código imediatamente sem pesquisar nada.',
+          'Deixar intocadas até o final do ano.'
+        ],
+        correct: 1,
+        explanation: 'A Matriz CSD é viva! Suposições e Dúvidas guiam as pesquisas até virarem Certezas comprovadas ou serem eliminadas.'
+      },
+      {
+        id: 'q8',
+        difficulty: 'facil',
+        prompt: 'Quem é o Stakeholder Chave denominado "Sponsor" (Patrocinador)?',
+        options: [
+          'O estagiário responsável pela ata das reuniões.',
+          'A pessoa ou entidade que fornece os recursos financeiros e autorização máxima para o projeto.',
+          'A empresa concorrente que lança um produto similar.',
+          'O testador que acha defeitos no sistema.'
+        ],
+        correct: 1,
+        explanation: 'O Sponsor é quem banca a verba e dá sustentação política para o projeto acontecer.'
+      },
+      {
+        id: 'q9',
+        difficulty: 'medio',
+        prompt: 'O Diretor Financeiro tem ALTO poder, mas BAIXO interesse no dia a dia da tela. Como o GP deve agir?',
+        options: [
+          'Monitorar com esforço mínimo ignorando mensagens.',
+          'Manter Satisfeito (relatórios executivos pontuais sem cansar com rotina operacional).',
+          'Obrigar a participar das reuniões diárias de 15 minutos em pé.',
+          'Tratar como concorrente.'
+        ],
+        correct: 1,
+        explanation: 'Alto Poder / Baixo Interesse = Manter Satisfeito (prestar contas sem sobrecarregar de detalhes técnicos).'
+      },
+      {
+        id: 'q10',
+        difficulty: 'dificil',
+        prompt: 'Por que o mapeamento de Stakeholders é de caráter estritamente restrito e confidencial?',
+        options: [
+          'Porque tem as senhas de servidores de produção.',
+          'Porque contém avaliações sensíveis de comportamento (quem resiste, quem apoia) e influência política.',
+          'Porque a lei proíbe desenvolvedores de saber quem é o patrocinador.',
+          'Porque apenas o marketing pode visualizar nomes.'
+        ],
+        correct: 1,
+        explanation: 'O mapa avalia se a pessoa é resistente ou apoiadora e jogos de poder. Se vazar, causa uma crise política enorme.'
+      },
+      {
+        id: 'q11',
+        difficulty: 'facil',
+        prompt: 'Nas palavras literais do Prof. Cassiano em sala, o que é "Escopo"?',
+        options: [
+          'O lucro anual estimado para a diretoria.',
+          'É a lista de requisitos. Se falar outra coisa tá errado!',
+          'A quantidade de telas desenhadas no Figma.',
+          'O número de bugs no Jira.'
+        ],
+        correct: 1,
+        explanation: 'Fala de sala: "Que é escopo? Se alguém ensinou alguma coisa diferente pra você, está errado, tá Jão? Nada mais é do que uma lista de requisitos."'
+      },
+      {
+        id: 'q12',
+        difficulty: 'medio',
+        prompt: 'O que Peter Drucker e o Cassiano destacaram sobre as funcionalidades de softwares?',
+        options: [
+          'Que programadores não devem fazer testes.',
+          'Que até 80% das funções de software nunca são usadas; fazer coisa inútil gera retrabalho que queima outros contratos.',
+          'Que documentação vale mais que código rodando.',
+          'Que clientes sabem tudo com perfeição no primeiro dia.'
+        ],
+        correct: 1,
+        explanation: '80% dos recursos nunca são usados. Fazer o inútil com eficiência é queimar dinheiro e atrasar a esteira inteira da empresa.'
+      },
+      {
+        id: 'q13',
+        difficulty: 'dificil',
+        prompt: '🚨 [QUESTÃO DE PROVA]: O Jira tem 600 tarefas todas marcadas com "Alta Prioridade". Essa empresa é ágil?',
+        options: [
+          'Sim, porque usa Jira e tem muitos requisitos cadastrados.',
+          'NÃO! Se tudo é prioridade, nada é prioridade. É só um backlog inchado sem gestão de valor.',
+          'Sim, porque prioridade alta significa agilidade máxima.',
+          'Sim, porque o PO eliminou a necessidade de Dailies.'
+        ],
+        correct: 1,
+        explanation: 'Resposta nota 100 de prova: NÃO É ÁGIL! Se tudo é prioridade, nada é prioridade. Ter ferramenta moderna não significa agilidade.'
+      },
+      {
+        id: 'q14',
+        difficulty: 'medio',
+        prompt: 'Por que o professor usou a analogia dos Thundercats ("Visão além do alcance") para a Visão do Produto?',
+        options: [
+          'Porque sem o logotipo do desenho o cliente cancela o contrato.',
+          'Porque se os membros tiverem visões divergentes, o projeto começa junto e vira um caos no final.',
+          'Porque o Scrum só serve para estúdios de desenho.',
+          'Para falar de cinema no lugar de gestão.'
+        ],
+        correct: 1,
+        explanation: 'Se a equipe não enxerga o mesmo futuro para o produto, cada um rema para um lado e a entrega final é um desastre.'
+      },
+      {
+        id: 'q15',
+        difficulty: 'facil',
+        prompt: 'Qual o formato padrão dos 3W\'s para História de Usuário?',
+        options: [
+          'Como [persona], eu quero [funcionalidade], para [benefício/valor].',
+          'Quando [data], onde [servidor], por que [orçamento].',
+          'Se [condição], então [comando], senão [erro].',
+          'Quem [dev], qual [tabela SQL], quanto [salário].'
+        ],
+        correct: 0,
+        explanation: 'Como [tipo de usuário], eu quero [ação], para [benefício/valor que vou receber].'
+      },
+      {
+        id: 'q16',
+        difficulty: 'medio',
+        prompt: 'Nos 3C\'s (Cartão, Conversa, Confirmação), o que é a "Confirmação"?',
+        options: [
+          'O comprovante bancário da mensalidade.',
+          'Os Critérios de Aceite objetivos e testáveis que eliminam dúvidas de interpretação.',
+          'O aperto de mão no fim do dia.',
+          'O e-mail de parabéns.'
+        ],
+        correct: 1,
+        explanation: 'Confirmação são os Critérios de Aceitação testáveis que comprovam que a história está pronta.'
+      },
+      {
+        id: 'q17',
+        difficulty: 'dificil',
+        prompt: 'Qual é a escala de tempo ensinada pelo professor para o "tamanho das coisas"?',
+        options: [
+          'Projeto (horas) ➔ Épico (dias) ➔ História (semanas) ➔ Tarefa (meses).',
+          'Projeto (meses) ➔ Épico (semanas) ➔ História (dias) ➔ Tarefa (horas).',
+          'Tarefa (meses) ➔ História (semanas) ➔ Épico (dias) ➔ Projeto (horas).',
+          'Tudo dura exatamente 15 minutos.'
+        ],
+        correct: 1,
+        explanation: 'Projeto = meses; Épico = semanas; História de Usuário = dias; Tarefa técnica = horas.'
+      },
+      {
+        id: 'q18',
+        difficulty: 'dificil',
+        prompt: '🐛 [PEGADINHA DE SALA]: Onde o Bug DEVE ser associado, e por qual motivo?',
+        options: [
+          'No Termo de Abertura (TAP).',
+          'Diretamente à TAREFA técnica que gerou o defeito, para dar rastreabilidade e medir o retrabalho.',
+          'Solto no Backlog sem ligar a nada.',
+          'Diretamente ao cliente.'
+        ],
+        correct: 1,
+        explanation: 'O bug fica na TAREFA técnica que gerou o erro para garantir rastreabilidade (quem fez, onde deu erro e medir retrabalho).'
+      },
+      {
+        id: 'q19',
+        difficulty: 'facil',
+        prompt: 'Qual foi a afirmação categórica do Cassiano sobre Scrum e Kanban?',
+        options: [
+          'Kanban é o framework ágil completo e Scrum é só o quadro.',
+          'Kanban NÃO é metodologia ágil! É só uma ferramenta visual de fluxo (A Fazer / Fazendo / Feito). Scrum é o framework.',
+          'Ambos são idênticos sem nenhuma diferença.',
+          'Nenhum dos dois se aplica a software.'
+        ],
+        correct: 1,
+        explanation: 'Kanban é só ferramenta visual de fluxo de trabalho. Scrum é o framework ágil com cerimônias e papéis.'
+      },
+      {
+        id: 'q20',
+        difficulty: 'medio',
+        prompt: 'O que o Cassiano criticou com a "analogia da bicicleta"?',
+        options: [
+          'Que programador deve ir de bicicleta trabalhar.',
+          'A dependência cega de ferramentas: quem sabe gerir usa qualquer uma; o processo e as pessoas vêm antes da ferramenta.',
+          'Que softwares caros garantem o sucesso.',
+          'Que gestão tradicional é mais rápida.'
+        ],
+        correct: 1,
+        explanation: 'Se aprendeu a pedalar, anda em qualquer bike. Na gestão é igual: quem sabe gerir usa Jira, Notion ou parede. A ferramenta é secundária.'
+      },
+      {
+        id: 'q21',
+        difficulty: 'medio',
+        prompt: 'Qual a diferença entre a Sprint Review e a Sprint Retrospective?',
+        options: [
+          'Review mostra o software funcionando aos clientes; Retrospectiva é reunião interna do time para avaliar processos e pessoas.',
+          'Review planeja a Sprint; Retrospectiva é onde o time tira férias.',
+          'Retrospectiva é feita com a imprensa; Review é secreta.',
+          'São sinônimos para a Daily de 15 minutos.'
+        ],
+        correct: 0,
+        explanation: 'Review = demonstrar o produto funcionando aos clientes. Retrospectiva = reunião estritamente interna do time para melhorar o processo.'
+      },
+      {
+        id: 'q22',
+        difficulty: 'dificil',
+        prompt: 'O Manifesto Ágil diz: "Software funcionando mais que documentação abrangente". O que isso quer dizer?',
+        options: [
+          'Que é proibido documentar qualquer coisa em projetos ágeis.',
+          'Isso não significa abandonar a documentação, mas sim que entregar o software funcionando para o cliente tem maior valor.',
+          'Que contratos não têm validade na TI.',
+          'Que a empresa não deve responder a mudanças.'
+        ],
+        correct: 1,
+        explanation: 'Não abandona processos nem documentos, mas quando há conflito, software funcionando e valor entregue são prioridades!'
+      }
+    ];
+
+    // ==========================================================================
+    // CONTROLE DE ESTADO
+    // ==========================================================================
+    const STORAGE_KEY = 'gestao_definitiva_v4';
+    let progress = { answers: {} };
+
+    function loadProgress() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) progress = JSON.parse(saved);
+      } catch (e) {}
+    }
+
+    function saveProgress() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+      } catch (e) {}
+    }
+
+    // ==========================================================================
+    // ABAS
+    // ==========================================================================
+    function initTabs() {
+      const btns = document.querySelectorAll('.nav-btn');
+      const panels = document.querySelectorAll('.tab-panel');
+
+      btns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const target = btn.getAttribute('data-tab');
+          btns.forEach(b => b.classList.remove('active'));
+          panels.forEach(p => p.classList.remove('active'));
+
+          btn.classList.add('active');
+          const panel = document.getElementById(target);
+          if (panel) {
+            panel.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+
+          if (target === 'tab-desempenho') updateStats();
+        });
+      });
+    }
+
+    // ==========================================================================
+    // RENDERIZAR QUIZ
+    // ==========================================================================
+    function renderQuiz() {
+      const container = document.getElementById('quizContainer');
+      const diff = document.getElementById('diffFilter').value;
+
+      const filtered = QUIZ_DATA.filter(q => (diff === 'todos' || q.difficulty === diff));
+      container.innerHTML = '';
+
+      const letters = ['A', 'B', 'C', 'D'];
+
+      filtered.forEach((q, idx) => {
+        const state = progress.answers[q.id];
+        const isAnswered = !!state;
+
+        const block = document.createElement('div');
+        block.className = 'question-block';
+        if (isAnswered) {
+          block.classList.add(state.isCorrect ? 'correct-border' : 'wrong-border');
+        }
+
+        let optsHtml = '';
+        q.options.forEach((opt, oIdx) => {
+          let btnClass = 'opt-btn';
+          if (isAnswered) {
+            if (oIdx === state.selected) {
+              btnClass += state.isCorrect ? ' correct' : ' wrong';
+            } else if (oIdx === q.correct && !state.isCorrect) {
+              btnClass += ' reveal-correct';
+            }
+          }
+
+          optsHtml += `
+            <button class="${btnClass}" data-qid="${q.id}" data-opt="${oIdx}" ${isAnswered ? 'disabled' : ''}>
+              <strong style="font-size: 12px; min-width: 16px;">${letters[oIdx]})</strong>
+              <span>${opt}</span>
+            </button>
+          `;
+        });
+
+        let fbHtml = '';
+        if (isAnswered) {
+          fbHtml = `
+            <div class="q-feedback show ${state.isCorrect ? 'correct' : 'wrong'}">
+              <strong>${state.isCorrect ? '✅ Acertou (Nota 100 com o Cassiano)!' : '❌ Errou! Cuidado com a pegadinha:'}</strong> ${q.explanation}
+            </div>
+          `;
+        }
+
+        block.innerHTML = `
+          <div class="q-meta">
+            <span>Questão ${idx + 1} de ${filtered.length}</span>
+            <span style="text-transform: capitalize;">${q.difficulty === 'dificil' ? 'Pegadinha de Prova' : q.difficulty}</span>
+          </div>
+          <div class="q-text">${q.prompt}</div>
+          <div class="opts-list" id="opts-${q.id}">${optsHtml}</div>
+          ${fbHtml}
+        `;
+
+        container.appendChild(block);
+      });
+
+      container.querySelectorAll('.opt-btn').forEach(btn => {
+        btn.addEventListener('click', handleAnswer);
+      });
+    }
+
+    function handleAnswer(e) {
+      const btn = e.currentTarget;
+      const qId = btn.getAttribute('data-qid');
+      const optIdx = parseInt(btn.getAttribute('data-opt'), 10);
+      const q = QUIZ_DATA.find(item => item.id === qId);
+
+      const isCorrect = (optIdx === q.correct);
+      progress.answers[qId] = { selected: optIdx, isCorrect: isCorrect };
+      saveProgress();
+      renderQuiz();
+    }
+
+    // ==========================================================================
+    // ESTATÍSTICAS
+    // ==========================================================================
+    function updateStats() {
+      const answeredKeys = Object.keys(progress.answers);
+      const total = answeredKeys.length;
+      let correct = 0;
+      answeredKeys.forEach(k => {
+        if (progress.answers[k].isCorrect) correct++;
+      });
+      const wrong = total - correct;
+      const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
+
+      document.getElementById('statAccuracy').textContent = `${accuracy}%`;
+      document.getElementById('statAnswered').textContent = `${total}/22`;
+      document.getElementById('statCorrect').textContent = correct;
+      document.getElementById('statWrong').textContent = wrong;
+
+      const msg = document.getElementById('statFeedbackMsg');
+      if (total === 0) {
+        msg.textContent = 'Você ainda não começou a responder o simulado.';
+      } else if (accuracy >= 80) {
+        msg.textContent = '🔥 Excelente! Você dominou os conceitos do Cassiano e tá preparado pra gabaritar.';
+      } else if (accuracy >= 60) {
+        msg.textContent = '👍 Bom ritmo! Releia os blocos com o aviso de pegadinha em vermelho nos módulos.';
+      } else {
+        msg.textContent = '💡 Dê uma revisada nos módulos 1 a 4 antes de tentar as questões difíceis.';
+      }
+    }
+
+    // ==========================================================================
+    // INICIALIZAÇÃO
+    // ==========================================================================
+    document.addEventListener('DOMContentLoaded', () => {
+      loadProgress();
+      initTabs();
+      renderQuiz();
+
+      document.getElementById('diffFilter').addEventListener('change', renderQuiz);
+
+      document.getElementById('btnResetCurrent').addEventListener('click', () => {
+        const diff = document.getElementById('diffFilter').value;
+        const targets = QUIZ_DATA.filter(q => (diff === 'todos' || q.difficulty === diff));
+        if (confirm(`Quer reiniciar as ${targets.length} questões exibidas?`)) {
+          targets.forEach(q => delete progress.answers[q.id]);
+          saveProgress();
+          renderQuiz();
+        }
+      });
+
+      document.getElementById('btnClearStorage').addEventListener('click', () => {
+        if (confirm('Quer apagar todo o histórico para recomeçar o simulado do zero?')) {
+          progress = { answers: {} };
+          saveProgress();
+          renderQuiz();
+          updateStats();
+          alert('Pronto! Histórico zerado.');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
